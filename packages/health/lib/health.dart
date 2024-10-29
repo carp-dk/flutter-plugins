@@ -2,7 +2,6 @@ library health;
 
 import 'dart:async';
 import 'dart:collection';
-import 'dart:ffi';
 import 'dart:io' show Platform;
 
 import 'package:carp_serializable/carp_serializable.dart';
