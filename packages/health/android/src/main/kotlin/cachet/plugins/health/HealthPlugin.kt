@@ -2,6 +2,7 @@ package cachet.plugins.health
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -16,7 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
-import androidx.core.app.ActivityCompat
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
@@ -1313,7 +1314,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     /** Get all datapoints of the DataType within the given time range */
     private fun getData(call: MethodCall, result: Result) {
 
-        if (StepCounterService.isRunning()) {
+        if (StepCounterService.initiated()) {
             getSensorData(call, result)
             return
         }
@@ -1475,7 +1476,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
 
         val healthConnectData = mutableListOf<Map<String, Any?>>()
 
-        if(dataType == STEPS && StepCounterService.isRunning()) {
+        if(dataType == STEPS && StepCounterService.initiated()) {
             val items = StepCounterService.box.boxFor(SensorStep::class.java).query(SensorStep_.startTime.between(startTime.toEpochMilli(),endTime.toEpochMilli())).build().find()
             healthConnectData.addAll(items.map {
                 mapOf<String, Any>(
@@ -1494,6 +1495,20 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         }
 
         Handler(context!!.mainLooper).run { result.success(healthConnectData) }
+    }
+
+
+    private fun getSensorDataCount(call: MethodCall, result: Result) {
+        val startTime = Instant.ofEpochMilli(call.argument<Long>("startTime")!!)
+        val endTime = Instant.ofEpochMilli(call.argument<Long>("endTime")!!)
+
+        val items = StepCounterService.box.boxFor(SensorStep::class.java).query(SensorStep_.startTime.between(startTime.toEpochMilli(),endTime.toEpochMilli())).build().find()
+        var totalResult = 0.0
+        items.forEach {
+            totalResult += it.count;
+        }
+
+        Handler(context!!.mainLooper).run { result.success(totalResult.toInt()) }
     }
 
     private fun getIntervalData(call: MethodCall, result: Result) {
@@ -2286,6 +2301,12 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         val start = call.argument<Long>("startTime")!!
         val end = call.argument<Long>("endTime")!!
 
+
+        if (StepCounterService.initiated()) {
+            getSensorDataCount(call, result)
+            return
+        }
+
         if (useHealthConnectIfAvailable && healthConnectAvailable) {
             getStepsHealthConnect(start, end, result)
             return
@@ -2463,8 +2484,18 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         }
     }
 
+    private fun isForegroundServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in activityManager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className && service.foreground) {
+                return true
+            }
+        }
+        return false
+    }
+
     private fun isStepSensorRunning(call: MethodCall, result: Result) {
-        result.success(StepCounterService.isRunning())
+        result.success(isForegroundServiceRunning(context!!,StepCounterService::class.java))
     }
 
     private fun stopStepSensorBackgroundService(call: MethodCall, result: Result) {
@@ -2473,11 +2504,17 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     }
 
     private fun startStepSensorBackgroundService(call: MethodCall, result: Result) {
-        if (ContextCompat.checkSelfPermission(activity!!, Manifest.permission.ACTIVITY_RECOGNITION)
-            != PackageManager.PERMISSION_GRANTED) {
-            mResult = result
-            activityRecognitionPermissionLauncher!!.launch(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION,Manifest.permission.POST_NOTIFICATIONS))
-            return
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (ContextCompat.checkSelfPermission(
+                    activity!!,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                mResult = result
+                activityRecognitionPermissionLauncher!!.launch(arrayOf(Manifest.permission.ACTIVITY_RECOGNITION))
+                return
+            }
         }
 
         startStepSenor()
@@ -2486,7 +2523,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
 
     private fun startStepSenor() {
         val serviceIntent = Intent(activity!!, StepCounterService::class.java)
-        activity!!.startForegroundService(serviceIntent)
+        ContextCompat.startForegroundService(context!!, serviceIntent)
     }
 
     private fun doseStepSensorIsAvailable(call: MethodCall, result: Result) {
@@ -2513,10 +2550,13 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             (activity as ComponentActivity).registerForActivityResult(
                 ActivityResultContracts.RequestMultiplePermissions()
             ) { granted ->
-                if(granted.size == 2) {
+                if(granted.isNotEmpty() && granted.values.first()) {
                     startStepSenor()
+                    mResult?.success(true)
+                    return@registerForActivityResult
                 }
-                mResult?.success(granted)
+
+                mResult?.success(false)
             }
     }
 

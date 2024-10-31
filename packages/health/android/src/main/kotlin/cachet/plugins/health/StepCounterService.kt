@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -13,6 +14,8 @@ import android.os.Build
 import android.os.IBinder
 import android.os.SystemClock
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import io.objectbox.BoxStore
 
 
@@ -29,20 +32,26 @@ class StepCounterService : Service(), SensorEventListener {
         const val LOG = "StepCounterService"
         const val SENSOR_NAME = Sensor.TYPE_STEP_COUNTER
 
-        fun isRunning(): Boolean {
+        const val CHANNEL_ID = "StepCounterServiceChannel"
+        const val CHANNEL_NAME = "Step Counter"
+        const val NOTIFICATION_ID = 1
+
+        fun initiated(): Boolean {
             return this::box.isInitialized;
         }
     }
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
 
     override fun onCreate() {
         super.onCreate()
-
-        box = MyObjectBox.builder()
-            .androidContext(applicationContext)
-            .build();
+        if (!initiated()) {
+            box = MyObjectBox.builder()
+                .androidContext(applicationContext)
+                .build();
+        }
 
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         sensor = sensorManager.getDefaultSensor(SENSOR_NAME)!!
@@ -55,28 +64,27 @@ class StepCounterService : Service(), SensorEventListener {
 
         return START_STICKY
     }
+
+    private fun createNotificationChannel() {
+        val notificationChannel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = applicationContext.getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(notificationChannel)
+    }
+
     private fun startForegroundService() {
-        val channelId = "my_foreground_service_channel"
-        createNotificationChannel(channelId)
+        createNotificationChannel()
 
-        val notification = Notification.Builder(this, channelId)
-            .setContentTitle("Step Detection")
-            .setContentText("Built-in step detection is working.")
-            .build()
-
-        startForeground(10001, notification)
-    }
-
-    private fun createNotificationChannel(channelId: String) {
-        val channel = NotificationChannel(
-            channelId,
-            "Built-in step detection is working.",
-            NotificationManager.IMPORTANCE_DEFAULT
+        ServiceCompat.startForeground(
+            this,
+            NOTIFICATION_ID,
+            NotificationCompat.Builder(this, CHANNEL_ID).build(),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+            } else {
+                0
+            }
         )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(channel)
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -92,7 +100,7 @@ class StepCounterService : Service(), SensorEventListener {
             }
 
             if (steps < previousStepCount && previousStepCount > maxStepsThreshold) {
-                Log.d(LOG,"Overflow detected. Resetting previousStepCount.")
+                Log.d(LOG, "Overflow detected. Resetting previousStepCount.")
                 previousStepCount = steps  // Reset the previous count to avoid overflow issues
                 return
             }
@@ -101,7 +109,8 @@ class StepCounterService : Service(), SensorEventListener {
             previousStepCount = steps
 
 
-            val eventHappened = System.currentTimeMillis() + ((event.timestamp- SystemClock.elapsedRealtimeNanos())/1000000L)
+            val eventHappened =
+                System.currentTimeMillis() + ((event.timestamp - SystemClock.elapsedRealtimeNanos()) / 1000000L)
 
             if (newSteps > 0) {
                 val step = SensorStep().apply {
@@ -111,11 +120,15 @@ class StepCounterService : Service(), SensorEventListener {
                 }
 
                 box.boxFor(SensorStep::class.java).put(step)
-                Log.d(LOG,"Steps: $newSteps at time: $eventHappened}-${System.currentTimeMillis()}")
+                Log.d(
+                    LOG,
+                    "Steps: $newSteps at time: $eventHappened}-${System.currentTimeMillis()}"
+                )
             }
         }
     }
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        Log.d(LOG,"onAccuracyChanged")
+        Log.d(LOG, "onAccuracyChanged")
     }
 }
