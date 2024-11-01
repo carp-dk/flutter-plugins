@@ -2522,8 +2522,12 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     }
 
     private fun startStepSenor() {
-        val serviceIntent = Intent(activity!!, StepCounterService::class.java)
-        ContextCompat.startForegroundService(context!!, serviceIntent)
+        try {
+            val serviceIntent = Intent(activity!!, StepCounterService::class.java)
+            ContextCompat.startForegroundService(context!!, serviceIntent)
+        } catch (e:Exception) {
+            Log.d("HealthPlugin", e.toString());
+        }
     }
 
     private fun doseStepSensorIsAvailable(call: MethodCall, result: Result) {
