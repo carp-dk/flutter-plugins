@@ -821,6 +821,13 @@ class Health {
     return fetchedDataPoints;
   }
 
+  Future<bool?> clearStepSensorData() async {
+    final clearStepSensorData =
+        await _channel.invokeMethod<bool?>('clearStepSensorData');
+
+    return clearStepSensorData;
+  }
+
   /// function for fetching statistic health data
   Future<List<HealthDataPoint>> _dataAggregateQuery(
       DateTime startDate,

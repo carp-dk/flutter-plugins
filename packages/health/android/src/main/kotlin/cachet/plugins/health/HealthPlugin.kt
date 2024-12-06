@@ -2478,6 +2478,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             "disconnect" -> disconnect(call, result)
             "doseStepSensorIsAvailable" -> doseStepSensorIsAvailable(call, result)
             "isStepSensorRunning" -> isStepSensorRunning(call, result)
+            "clearStepSensorData" -> clearStepSensorData(call, result)
             "startStepSensorBackgroundService" -> startStepSensorBackgroundService(call, result)
             "stopStepSensorBackgroundService" -> stopStepSensorBackgroundService(call, result)
             else -> result.notImplemented()
@@ -2496,6 +2497,10 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
 
     private fun isStepSensorRunning(call: MethodCall, result: Result) {
         result.success(isForegroundServiceRunning(context!!,StepCounterService::class.java))
+    }
+    private fun clearStepSensorData(call: MethodCall, result: Result) {
+        StepCounterService.box.boxFor(SensorStep::class.java).removeAll()
+        result.success(true)
     }
 
     private fun stopStepSensorBackgroundService(call: MethodCall, result: Result) {
