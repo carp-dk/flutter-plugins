@@ -3,6 +3,7 @@ version '1.2'
 
 buildscript {
     ext.kotlin_version = '1.9.22'
+    ext.objectboxVersion = "4.0.3"
     repositories {
         google()
         mavenCentral()
@@ -11,6 +12,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.1.4'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath("io.objectbox:objectbox-gradle-plugin:$objectboxVersion")
     }
 }
 
@@ -22,7 +24,10 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+apply plugin: "io.objectbox"
+
 
 android {
     compileSdkVersion 34
@@ -47,7 +52,14 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
     namespace "cachet.plugins.health"
+}
+
+kapt {
+    arguments {
+        arg("objectbox.modelPath", "$projectDir/schemas/objectbox.json")
+    }
 }
 
 dependencies {

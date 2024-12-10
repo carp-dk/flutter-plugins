@@ -793,6 +793,41 @@ class Health {
     return <HealthDataPoint>[];
   }
 
+  Future<bool?> doseStepSensorIsAvailable() async {
+    final fetchedDataPoints =
+        await _channel.invokeMethod<bool?>('doseStepSensorIsAvailable');
+
+    return fetchedDataPoints;
+  }
+
+  Future<bool?> startStepSensorBackgroundService() async {
+    final fetchedDataPoints =
+        await _channel.invokeMethod<bool?>('startStepSensorBackgroundService');
+
+    return fetchedDataPoints;
+  }
+
+  Future<bool?> stopStepSensorBackgroundService() async {
+    final fetchedDataPoints =
+        await _channel.invokeMethod<bool?>('stopStepSensorBackgroundService');
+
+    return fetchedDataPoints;
+  }
+
+  Future<bool?> isStepSensorRunning() async {
+    final fetchedDataPoints =
+        await _channel.invokeMethod<bool?>('isStepSensorRunning');
+
+    return fetchedDataPoints;
+  }
+
+  Future<bool?> clearStepSensorData() async {
+    final clearStepSensorData =
+        await _channel.invokeMethod<bool?>('clearStepSensorData');
+
+    return clearStepSensorData;
+  }
+
   /// function for fetching statistic health data
   Future<List<HealthDataPoint>> _dataAggregateQuery(
       DateTime startDate,
