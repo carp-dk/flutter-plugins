@@ -663,7 +663,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                     samplesCategory = samplesCategory.filter { $0.value == 2 }
                 }
                 if dataTypeKey == self.SLEEP_ASLEEP {
-                    samplesCategory = samplesCategory.filter { $0.value == 3 }
+                    samplesCategory = samplesCategory.filter { $0.value == 3  || $0.value == 1 }
                 }
                 if dataTypeKey == self.SLEEP_DEEP {
                     samplesCategory = samplesCategory.filter { $0.value == 4 }
