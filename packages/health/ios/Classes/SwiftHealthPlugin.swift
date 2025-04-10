@@ -566,12 +566,15 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
         let dataType = dataTypeLookUp(key: dataTypeKey)
 
-        let predicate = HKQuery.predicateForSamples(
+         let samplePredicate = HKQuery.predicateForSamples(
             withStart: dateFrom, end: dateTo, options: .strictStartDate)
+        let ownerPredicate = HKQuery.predicateForObjects(from: HKSource.default())
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
 
         let deleteQuery = HKSampleQuery(
-            sampleType: dataType, predicate: predicate, limit: HKObjectQueryNoLimit,
+            sampleType: dataType,
+            predicate: NSCompoundPredicate(andPredicateWithSubpredicates: [samplePredicate, ownerPredicate]),
+            limit: HKObjectQueryNoLimit,
             sortDescriptors: [sortDescriptor]
         ) { [self] x, samplesOrNil, error in
 
