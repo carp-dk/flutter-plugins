@@ -36,4 +36,12 @@ class HealthPermissionChecker(private val context: Context) {
             healthCaloriesPermission
         ) == PackageManager.PERMISSION_GRANTED
     }
+
+    fun isHealthStepsPermissionGranted(): Boolean {
+        val healthStepsPermission = "android.permission.health.READ_STEPS"
+        return ContextCompat.checkSelfPermission(
+            context,
+            healthStepsPermission
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 }

@@ -350,19 +350,29 @@ class HealthDataReader(
                 )
             }
 
+            
             // Get steps data
-            val stepRequest = healthConnectClient.readRecords(
-                ReadRecordsRequest(
-                    recordType = StepsRecord::class,
-                    timeRangeFilter = TimeRangeFilter.between(
-                        record.startTime,
-                        record.endTime
-                    ),
-                ),
-            )
             var totalSteps = 0.0
+            if (permissionChecker.isHealthStepsPermissionGranted()) {
+                val stepRequest = healthConnectClient.readRecords(
+                    ReadRecordsRequest(
+                        recordType = StepsRecord::class,
+                        timeRangeFilter = TimeRangeFilter.between(
+                            record.startTime,
+                            record.endTime
+                        ),
+                    ),
+                )
+
             for (stepRec in stepRequest.records) {
                 totalSteps += stepRec.count
+            }
+               
+            } else {
+                Log.i(
+                    "FLUTTER_HEALTH",
+                    "Skipping steps data retrieval for workout due to missing permissions"
+                )
             }
 
             // Add final datapoint
