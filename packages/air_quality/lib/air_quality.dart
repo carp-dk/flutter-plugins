@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Copenhagen Center for Health Technology (CACHET) at the
+ * Copyright 2025 Copenhagen Research Platform (CARP) at the
  * Technical University of Denmark (DTU).
  * Use of this source code is governed by a MIT-style license that can be
  * found in the LICENSE file.
@@ -31,20 +31,21 @@ enum AirQualityLevel {
 }
 
 AirQualityLevel airQualityIndexToLevel(int index) {
-  if (index < 0)
+  if (index < 0) {
     return AirQualityLevel.UNKNOWN;
-  else if (index <= 50)
+  } else if (index <= 50) {
     return AirQualityLevel.GOOD;
-  else if (index <= 100)
+  } else if (index <= 100) {
     return AirQualityLevel.MODERATE;
-  else if (index <= 150)
+  } else if (index <= 150) {
     return AirQualityLevel.UNHEALTHY_FOR_SENSITIVE_GROUPS;
-  else if (index <= 200)
+  } else if (index <= 200) {
     return AirQualityLevel.UNHEALTHY;
-  else if (index <= 300)
+  } else if (index <= 300) {
     return AirQualityLevel.VERY_UNHEALTHY;
-  else
+  } else {
     return AirQualityLevel.HAZARDOUS;
+  }
 }
 
 /// A class for storing Air Quality JSON Data fetched from the API.

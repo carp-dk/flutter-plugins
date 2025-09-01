@@ -1,0 +1,19 @@
+{
+  "lsp": {
+    "dart": {
+      "binary": {
+        "path": "/opt/homebrew/bin/fvm",
+        "arguments": ["dart", "language-server", "--protocol=lsp"]
+      }
+    }
+  },
+  "auto_install_extensions": {
+    "dart": true
+  },
+  "debugger": {
+    "stepping_granularity": "line",
+    "save_breakpoints": true,
+    "show_button": true,
+    "timeout": 3000
+  }
+}

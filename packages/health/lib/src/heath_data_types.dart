@@ -4,6 +4,9 @@ part of '../health.dart';
 enum HealthDataType {
   ACTIVE_ENERGY_BURNED,
   ATRIAL_FIBRILLATION_BURDEN,
+  APPLE_STAND_HOUR,
+  APPLE_MOVE_TIME,
+  APPLE_STAND_TIME,
   AUDIOGRAM,
   BASAL_ENERGY_BURNED,
   BLOOD_GLUCOSE,
@@ -71,6 +74,8 @@ enum HealthDataType {
   DISTANCE_CYCLING,
   FLIGHTS_CLIMBED,
   DISTANCE_DELTA,
+  WALKING_SPEED,
+  SPEED,
   MINDFULNESS,
   WATER,
   SLEEP_ASLEEP,
@@ -91,6 +96,7 @@ enum HealthDataType {
   HEADACHE_SEVERE,
   HEADACHE_UNSPECIFIED,
   NUTRITION,
+  UV_INDEX,
   // HealthKit Characteristics
   GENDER,
   BIRTH_DATE,
@@ -107,7 +113,7 @@ enum HealthDataType {
   ELECTROCARDIOGRAM,
 
   // Health Connect
-  TOTAL_CALORIES_BURNED
+  TOTAL_CALORIES_BURNED,
 }
 
 /// Access types for Health Data.
@@ -121,6 +127,9 @@ enum HealthDataAccess {
 const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.ACTIVE_ENERGY_BURNED,
   HealthDataType.ATRIAL_FIBRILLATION_BURDEN,
+  HealthDataType.APPLE_STAND_HOUR,
+  HealthDataType.APPLE_MOVE_TIME,
+  HealthDataType.APPLE_STAND_TIME,
   HealthDataType.AUDIOGRAM,
   HealthDataType.BASAL_ENERGY_BURNED,
   HealthDataType.BLOOD_GLUCOSE,
@@ -189,6 +198,7 @@ const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.DISTANCE_WALKING_RUNNING,
   HealthDataType.DISTANCE_SWIMMING,
   HealthDataType.DISTANCE_CYCLING,
+  HealthDataType.WALKING_SPEED,
   HealthDataType.MINDFULNESS,
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.SLEEP_AWAKE,
@@ -212,6 +222,8 @@ const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.MENSTRUATION_FLOW,
   HealthDataType.WATER_TEMPERATURE,
   HealthDataType.UNDERWATER_DEPTH,
+  HealthDataType.UV_INDEX,
+  HealthDataType.TOTAL_CALORIES_BURNED,
 ];
 
 /// List of data types available on Android
@@ -232,6 +244,7 @@ const List<HealthDataType> dataTypeKeysAndroid = [
   HealthDataType.STEPS,
   HealthDataType.WEIGHT,
   HealthDataType.DISTANCE_DELTA,
+  HealthDataType.SPEED,
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.SLEEP_AWAKE_IN_BED,
   HealthDataType.SLEEP_AWAKE,
@@ -256,6 +269,9 @@ const List<HealthDataType> dataTypeKeysAndroid = [
 const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
   HealthDataType.ACTIVE_ENERGY_BURNED: HealthDataUnit.KILOCALORIE,
   HealthDataType.ATRIAL_FIBRILLATION_BURDEN: HealthDataUnit.PERCENT,
+  HealthDataType.APPLE_STAND_HOUR: HealthDataUnit.HOUR,
+  HealthDataType.APPLE_MOVE_TIME: HealthDataUnit.SECOND,
+  HealthDataType.APPLE_STAND_TIME: HealthDataUnit.SECOND,
   HealthDataType.AUDIOGRAM: HealthDataUnit.DECIBEL_HEARING_LEVEL,
   HealthDataType.BASAL_ENERGY_BURNED: HealthDataUnit.KILOCALORIE,
   HealthDataType.BLOOD_GLUCOSE: HealthDataUnit.MILLIGRAM_PER_DECILITER,
@@ -323,6 +339,8 @@ const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
   HealthDataType.DISTANCE_CYCLING: HealthDataUnit.METER,
   HealthDataType.FLIGHTS_CLIMBED: HealthDataUnit.COUNT,
   HealthDataType.DISTANCE_DELTA: HealthDataUnit.METER,
+  HealthDataType.WALKING_SPEED: HealthDataUnit.METER_PER_SECOND,
+  HealthDataType.SPEED: HealthDataUnit.METER_PER_SECOND,
 
   HealthDataType.WATER: HealthDataUnit.LITER,
   HealthDataType.SLEEP_ASLEEP: HealthDataUnit.MINUTE,
@@ -362,6 +380,7 @@ const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
   HealthDataType.MENSTRUATION_FLOW: HealthDataUnit.NO_UNIT,
   HealthDataType.WATER_TEMPERATURE: HealthDataUnit.DEGREE_CELSIUS,
   HealthDataType.UNDERWATER_DEPTH: HealthDataUnit.METER,
+  HealthDataType.UV_INDEX: HealthDataUnit.COUNT,
 
   // Health Connect
   HealthDataType.TOTAL_CALORIES_BURNED: HealthDataUnit.KILOCALORIE,
@@ -449,6 +468,7 @@ enum HealthDataUnit {
   BEATS_PER_MINUTE,
   RESPIRATIONS_PER_MINUTE,
   MILLIGRAM_PER_DECILITER,
+  METER_PER_SECOND,
   UNKNOWN_UNIT,
   NO_UNIT,
 }
@@ -466,6 +486,7 @@ enum HealthWorkoutActivityType {
   BASKETBALL,
   BIKING, // This also entails the iOS version where it is called CYCLING
   BOXING,
+  CARDIO_DANCE,
   CRICKET,
   CROSS_COUNTRY_SKIING,
   CURLING,
@@ -504,7 +525,6 @@ enum HealthWorkoutActivityType {
   // iOS only
   BARRE,
   BOWLING,
-  CARDIO_DANCE,
   CLIMBING,
   COOLDOWN,
   CORE_TRAINING,

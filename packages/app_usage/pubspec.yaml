@@ -1,11 +1,11 @@
 name: app_usage
 description: App usage plugin for Android only, which can be used to get the time spent by the user in each app.
-version: 3.0.1
+version: 4.0.1
 homepage: https://github.com/cph-cachet/flutter-plugins/blob/master/packages/app_usage
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.0"
 
 dependencies:
   flutter:

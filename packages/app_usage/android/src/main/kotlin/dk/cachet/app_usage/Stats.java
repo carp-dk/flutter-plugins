@@ -44,11 +44,11 @@ public class Stats {
             UsageStats us = usageStatsMap.get(packageName);
             try {
                 long timeMs = us.getTotalTimeInForeground();
-                Double timeSeconds = new Double(timeMs / 1000);
+                Double timeSeconds = Double.valueOf(timeMs / 1000);
                 long timeMsFirst = us.getFirstTimeStamp();
-                Double timeSecondsStart = new Double(timeMsFirst / 1000);
+                Double timeSecondsStart = Double.valueOf(timeMsFirst / 1000);
                 long timeMsStop = us.getLastTimeStamp();
-                Double timeSecondsStop = new Double(timeMsStop / 1000);
+                Double timeSecondsStop = Double.valueOf(timeMsStop / 1000);
 				
 				Double timeSecondsLastUse=0.0;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {

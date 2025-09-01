@@ -1,3 +1,11 @@
+## 5.1.0
+
+- upgrading gradle version
+- upgrading agp version
+- upgrading kotlin version
+- changing gradle file structure
+- upgrading ios version
+
 ## 5.0.2
 
 - upgrade to `audio_streamer: ^4.0.0`

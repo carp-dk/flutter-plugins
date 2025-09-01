@@ -108,26 +108,6 @@ The following are cases for which an exception will be thrown:
 * The provided OpenWeather API key is invalid
 * An bad response was given by the API; it may be down.
 
-## NB: AndroidX support
-**Only for Android API level 28**
-
-Update the contents of the `android/gradle.properties` file with the following:
-```
-android.enableJetifier=true
-android.useAndroidX=true
-org.gradle.jvmargs=-Xmx1536M
-```
-
-Next, add the following dependencies to your `android/build.gradle` file:
-```
-dependencies {
-  classpath 'com.android.tools.build:gradle:3.3.0'
-  classpath 'com.google.gms:google-services:4.2.0'
-} 
-```
-
-And finally, set the Android compile- and minimum SDK versions to `compileSdkVersion 28`, and `minSdkVersion 21` respectively, inside the `android/app/build.gradle` file.
-
 
 ### Languages
 The following languages are supported

@@ -3,11 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:screen_state/screen_state.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(ScreenStateApp());
 
-class MyApp extends StatefulWidget {
+class ScreenStateApp extends StatefulWidget {
+  const ScreenStateApp({super.key});
+
   @override
-  _MyAppState createState() => new _MyAppState();
+  ScreenStateAppState createState() => ScreenStateAppState();
 }
 
 class ScreenStateEventEntry {
@@ -19,12 +21,13 @@ class ScreenStateEventEntry {
   }
 }
 
-class _MyAppState extends State<MyApp> {
-  Screen _screen = Screen();
+class ScreenStateAppState extends State<ScreenStateApp> {
+  final Screen _screen = Screen();
   StreamSubscription<ScreenStateEvent>? _subscription;
   bool started = false;
-  List<ScreenStateEventEntry> _log = [];
+  final List<ScreenStateEventEntry> _log = [];
 
+  @override
   void initState() {
     super.initState();
     startListening();
@@ -33,18 +36,17 @@ class _MyAppState extends State<MyApp> {
   /// Start listening to screen events
   void startListening() {
     try {
-      _subscription = _screen.screenStateStream!.listen(_onData);
+      _subscription = _screen.screenStateStream.listen(onData);
       setState(() => started = true);
-    } on ScreenStateException catch (exception) {
+    } catch (exception) {
       print(exception);
     }
   }
 
-  void _onData(ScreenStateEvent event) {
+  void onData(ScreenStateEvent event) {
     setState(() {
       _log.add(ScreenStateEventEntry(event));
     });
-    print(event);
   }
 
   /// Stop listening to screen events
@@ -55,13 +57,13 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
           title: const Text('Screen State Example'),
         ),
-        body: new Center(
-            child: new ListView.builder(
+        body: Center(
+            child: ListView.builder(
                 itemCount: _log.length,
                 reverse: true,
                 itemBuilder: (BuildContext context, int idx) {
@@ -70,7 +72,7 @@ class _MyAppState extends State<MyApp> {
                       leading: Text(entry.time.toString().substring(0, 19)),
                       trailing: Text(entry.event.toString().split('.').last));
                 })),
-        floatingActionButton: new FloatingActionButton(
+        floatingActionButton: FloatingActionButton(
           onPressed: started ? stopListening : startListening,
           tooltip: 'Start/Stop Listening',
           child: started ? Icon(Icons.stop) : Icon(Icons.play_arrow),

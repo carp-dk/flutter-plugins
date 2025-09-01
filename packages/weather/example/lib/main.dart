@@ -17,7 +17,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String key = '856822fd8e22db5e1ba48c0e7d69844a';
+  String key = '12b6e28582eb9298577c734a31ba9f4f';
   late WeatherFactory ws;
   List<Weather> _data = [];
   AppState _state = AppState.NOT_DOWNLOADED;

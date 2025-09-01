@@ -31,7 +31,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # The eSense plugin requires permissions to location and bluetooth.
-  permission_handler: ^10.3.0  
+  permission_handler: ^11.0.0
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,11 @@
+## 4.1.1
+
+* upgrading ios version
+
+## 4.1.0
+
+* removing unused package
+
 ## 4.0.0
 
 * Upgrade of APK (issue [[#1116](https://github.com/cph-cachet/flutter-plugins/issues/1116)])

@@ -1,6 +1,6 @@
 name: air_quality
 description: Air quality index from the World's Air Quality Index (WAQI) service.
-version: 4.0.0
+version: 4.1.1
 homepage: https://github.com/cph-cachet/flutter-plugins/tree/master/packages/air_quality
 
 environment:

@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'health'
-  s.version          = '12.0.0'
+  s.version          = '13.1.1'
   s.summary          = 'Wrapper for Apple\'s HealthKit on iOS and Google\'s Health Connect on Android.'
   s.description      = <<-DESC
 Wrapper for Apple's HealthKit on iOS and Google's Health Connect on Android.
@@ -16,7 +16,8 @@ Wrapper for Apple's HealthKit on iOS and Google's Health Connect on Android.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
 
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '14.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
+  s.swift_version = '5.0'
 end
 

@@ -33,10 +33,6 @@ class _MyAppState extends State<MyApp> {
     print(event.toString());
   }
 
-  void example() {
-    Notifications().notificationStream!.listen((event) => print(event));
-  }
-
   void startListening() {
     _notifications = Notifications();
     try {

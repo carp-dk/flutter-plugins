@@ -37,6 +37,14 @@
     <meta-data
       android:name="flutterEmbedding"
       android:value="2" />
+    <receiver
+      android:name="dk.cachet.notifications.NotificationReceiver"
+      android:exported="true"> 
+      <intent-filter>
+          <action android:name="dk.cachet.notifications.NOTIFICATION_EVENT" />
+      </intent-filter>
+    </receiver>
+
     <!-- Don't delete the meta-data below.
          This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
     <service

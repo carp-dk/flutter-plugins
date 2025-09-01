@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build.VERSION_CODES;
+import android.os.Build.VERSION;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
@@ -81,7 +82,11 @@ public class NotificationsPlugin implements FlutterPlugin, EventChannel.StreamHa
       intentFilter.addAction(NotificationListener.NOTIFICATION_INTENT);
 
       NotificationReceiver receiver = new NotificationReceiver(events);
-      context.registerReceiver(receiver, intentFilter);
+      if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+        context.registerReceiver(receiver, intentFilter, Context.RECEIVER_EXPORTED);
+      } else {
+        context.registerReceiver(receiver, intentFilter);
+      }
 
       /// Set up listener intent
       Intent listenerIntent = new Intent(context, NotificationListener.class);

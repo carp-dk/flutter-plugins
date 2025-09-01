@@ -24,7 +24,7 @@ enum ScreenStateEvent {
             ? 'android.intent.action.SCREEN_OFF'
             : 'SCREEN_OFF';
       default:
-        throw new ArgumentError('Unknown ScreenStateEvent: $this');
+        throw ArgumentError('Unknown ScreenStateEvent: $this');
     }
   }
 
@@ -41,52 +41,28 @@ enum ScreenStateEvent {
       case 'android.intent.action.SCREEN_OFF': // Android only 'SCREEN_OFF'
         return ScreenStateEvent.SCREEN_OFF;
       default:
-        throw new ArgumentError('Unknown ScreenStateEvent: $name');
+        throw ArgumentError('Unknown ScreenStateEvent: $name');
     }
   }
 }
 
-/// Custom Exception for the `screen_state` plugin, used whenever the plugin
-class ScreenStateException implements Exception {
-  String _cause;
-
-  ScreenStateException(this._cause);
-
-  @override
-  String toString() => '$runtimeType - $_cause';
-}
-
-/// Screen representation as object which holds the stream for [ScreenStateEvent]s.
+/// Screen state events as they occur on the phone.
 class Screen {
   static Screen? _singleton;
-  EventChannel _eventChannel = const EventChannel('screenStateEvents');
+  final EventChannel _eventChannel = const EventChannel('screenStateEvents');
   Stream<ScreenStateEvent>? _screenStateStream;
-  ScreenStateEvent? _lastScreenState;
 
   /// Constructs a singleton instance of [Screen].
-  ///
-  /// [Screen] is designed to work as a singleton.
   factory Screen() => _singleton ??= Screen._();
 
   Screen._();
 
-  /// Stream of [ScreenStateEvent]s.
-  /// Each event is streamed as it occurs on the phone.
-  Stream<ScreenStateEvent> get screenStateStream {
-    if (!Platform.isAndroid && !Platform.isIOS) {
-      throw ScreenStateException(
-        'Screen State API only available on Android and iOS.',
-      );
-    }
-
-    if (_screenStateStream == null) {
-      _screenStateStream = _eventChannel.receiveBroadcastStream().map(
-            (event) => ScreenStateEvent.fromName(
-              event,
-            ),
-          );
-    }
-
-    return _screenStateStream!;
-  }
+  /// Stream of [ScreenStateEvent]s as they occurs on the phone.
+  /// Returns an empty stream on unsupported platforms.
+  Stream<ScreenStateEvent> get screenStateStream =>
+      _screenStateStream ??= Platform.isAndroid || Platform.isIOS
+          ? _screenStateStream ??= _eventChannel
+              .receiveBroadcastStream()
+              .map((event) => ScreenStateEvent.fromName(event))
+          : Stream<ScreenStateEvent>.empty();
 }

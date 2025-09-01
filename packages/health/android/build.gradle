@@ -25,15 +25,15 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 34
+    compileSdk 34
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {
@@ -51,12 +51,12 @@ android {
 }
 
 dependencies {
-    def composeBom = platform('androidx.compose:compose-bom:2022.10.00')
+    def composeBom = platform('androidx.compose:compose-bom:2025.02.00')
     implementation(composeBom)
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    implementation("androidx.health.connect:connect-client:1.1.0-alpha07")
-    def fragment_version = "1.6.2"
+    implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
+    def fragment_version = "1.8.6"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
 
 }

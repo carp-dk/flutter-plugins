@@ -74,6 +74,16 @@ An example of asking for permission to read and write heart rate data is shown b
 <uses-permission android:name="android.permission.health.WRITE_HEART_RATE"/>
 ```
 
+By default, Health Connect restricts read data to 30 days from when permission has been granted.
+
+You can check and request access to historical data using the `isHealthDataHistoryAuthorized` and `requestHealthDataHistoryAuthorization` methods, respectively.
+
+The above methods require the following permission to be declared:
+
+```xml
+<uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY"/>
+```
+
 Accessing fitness data (e.g. Steps) requires permission to access the "Activity Recognition" API. To set it add the following line to your `AndroidManifest.xml` file.
 
 ```xml
@@ -301,6 +311,17 @@ List<HealthDataPoint> points = ...;
 points = health.removeDuplicates(points);
 ```
 
+### Android: Reading Health Data in Background
+Currently health connect allows apps to read health data in the background. In order to achieve this add the following permission to your `AndroidManifest.XML`:
+```XML
+<!-- For reading data in background -->
+<uses-permission android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND"/>
+```
+Furthermore, the plugin now exposes three new functions to help you check and request access to read data in the background:
+1. `isHealthDataInBackgroundAvailable()`: Checks if the Health Data in Background feature is available
+2. `isHealthDataInBackgroundAuthorized()`: Checks the current status of the Health Data in Background permission
+3. `requestHealthDataInBackgroundAuthorization()`: Requests the Health Data in Background permission.
+
 ## Data Types
 
 The plugin supports the following [`HealthDataType`](https://pub.dev/documentation/health/latest/health/HealthDataType.html).
@@ -362,7 +383,12 @@ The plugin supports the following [`HealthDataType`](https://pub.dev/documentati
 | MENSTRUATION_FLOW            | NO_UNIT                 | yes              | yes                       |                                                                                                                                    |
 | WATER_TEMPERATURE            | DEGREE_CELSIUS          | yes              |                           | Related to/Requires Apple Watch Ultra's Underwater Diving Workout                                                                  |
 | UNDERWATER_DEPTH             | METER                   | yes              |                           | Related to/Requires Apple Watch Ultra's Underwater Diving Workout                                                                  |
+| UV_INDEX                     | COUNT                   | yes              |                           |                                                                                                                                    |
 | LEAN_BODY_MASS               | KILOGRAMS               | yes              | yes                       |                                                                                                                                    |
+| WALKING_SPEED                | METER_PER_SECOND        | yes              | (yes)                     | On Android this will be recorded as `SPEED` with similar unit                                                                      |
+| APPLE_MOVE_TIME              | SECOND                  | yes              |                           | READ Only                                                                                                                          |
+| APPLE_STAND_HOUR             | HOUR                    | yes              |                           | READ Only                                                                                                                          |
+| APPLE_MOVE_TIME              | SECOND                  | yes              |                           | READ Only                                                                                                                          |
 
 ## Workout Types
 

@@ -1,3 +1,10 @@
+## 3.2.0
+
+- major gradle upgrade
+- upgrade kotlin plugin and AGP
+- upgrade of compileSdkVersion
+- change gradle file structure
+
 ## 3.1.2
 
 - Upgrade to flutter version 3.2.0

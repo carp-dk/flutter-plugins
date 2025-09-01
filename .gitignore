@@ -9,6 +9,9 @@
 .buildlog/
 .history
 .svn/
+.build/
+.swiftpm/
+build/
 
 # IntelliJ related
 *.iml
@@ -86,6 +89,7 @@ unlinked_spec.ds
 **/ios/**/.symlinks/
 **/ios/**/profile
 **/ios/**/xcuserdata
+**/ioa/**/.build
 **/ios/.generated/
 **/ios/Flutter/.last_build_id
 **/ios/Flutter/App.framework
@@ -117,7 +121,7 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
-packages/app_usage/example/.flutter-plugins-dependencies
-packages/app_usage/example/.flutter-plugins-dependencies
 
 .sdkmanrc
+**/.cxx/
+.zed/settings.json

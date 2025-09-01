@@ -1,3 +1,10 @@
+## 3.1.0
+
+- Upgrading gradle version
+- Upgrading agp version
+- Upgrading kotlin version
+
+
 ## 3.0.0
 
 - Updated Android AGP

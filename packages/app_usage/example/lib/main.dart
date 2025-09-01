@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:app_usage/app_usage.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(AppUsageApp());
 
-class MyApp extends StatefulWidget {
+class AppUsageApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  AppUsageAppState createState() => AppUsageAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class AppUsageAppState extends State<AppUsageApp> {
   List<AppUsageInfo> _infos = [];
 
   @override
@@ -23,11 +23,7 @@ class _MyAppState extends State<MyApp> {
       List<AppUsageInfo> infoList =
           await AppUsage().getAppUsage(startDate, endDate);
       setState(() => _infos = infoList);
-
-      for (var info in infoList) {
-        print(info.toString());
-      }
-    } on AppUsageException catch (exception) {
+    } catch (exception) {
       print(exception);
     }
   }
