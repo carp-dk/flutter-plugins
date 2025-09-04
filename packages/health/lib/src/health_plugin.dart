@@ -274,8 +274,8 @@ class Health {
     if (Platform.isIOS) return false;
 
     try {
-      final status =
-          await _channel.invokeMethod<bool>('isHealthDataInBackgroundAvailable');
+      final status = await _channel
+          .invokeMethod<bool>('isHealthDataInBackgroundAvailable');
       return status ?? false;
     } catch (e) {
       debugPrint(
@@ -295,8 +295,8 @@ class Health {
     if (Platform.isIOS) return true;
 
     try {
-      final status =
-          await _channel.invokeMethod<bool>('isHealthDataInBackgroundAuthorized');
+      final status = await _channel
+          .invokeMethod<bool>('isHealthDataInBackgroundAuthorized');
       return status ?? false;
     } catch (e) {
       debugPrint(
@@ -318,8 +318,8 @@ class Health {
 
     await _checkIfHealthConnectAvailableOnAndroid();
     try {
-      final bool? isAuthorized =
-          await _channel.invokeMethod('requestHealthDataInBackgroundAuthorization');
+      final bool? isAuthorized = await _channel
+          .invokeMethod('requestHealthDataInBackgroundAuthorization');
       return isAuthorized ?? false;
     } catch (e) {
       debugPrint(
@@ -592,7 +592,8 @@ class Health {
     }
 
     if (Platform.isIOS && type == null) {
-      throw ArgumentError("On iOS, both UUID and type are required to delete a record.");
+      throw ArgumentError(
+          "On iOS, both UUID and type are required to delete a record.");
     }
 
     Map<String, dynamic> args = {

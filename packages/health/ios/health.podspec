@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'health'
-  s.version          = '13.1.1'
+  s.version          = '13.1.4'
   s.summary          = 'Wrapper for Apple\'s HealthKit on iOS and Google\'s Health Connect on Android.'
   s.description      = <<-DESC
 Wrapper for Apple's HealthKit on iOS and Google's Health Connect on Android.

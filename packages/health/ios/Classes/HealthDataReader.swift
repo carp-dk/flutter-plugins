@@ -303,16 +303,14 @@ class HealthDataReader {
                 }
             } else {
                 if #available(iOS 14.0, *), let ecgSamples = samples as? [HKElectrocardiogram] {
-                    let dictionaries = ecgSamples.map(self.fetchEcgMeasurements)
-                    DispatchQueue.main.async {
-                        result(dictionaries)
-                    }
+                    self.fetchEcgMeasurements(ecgSamples, result)
                 } else {
                     DispatchQueue.main.async {
                         print("Error getting ECG - only available on iOS 14.0 and above!")
                         result(nil)
                     }
                 }
+                
             }
         }
         
@@ -546,38 +544,62 @@ class HealthDataReader {
     /// - Parameter sample: ECG sample
     /// - Returns: Dictionary with ECG data
     @available(iOS 14.0, *)
-    private func fetchEcgMeasurements(_ sample: HKElectrocardiogram) -> NSDictionary {
-        let semaphore = DispatchSemaphore(value: 0)
-        var voltageValues = [NSDictionary]()
-        let voltageQuery = HKElectrocardiogramQuery(sample) { query, result in
-            switch result {
-            case let .measurement(measurement):
-                if let voltageQuantity = measurement.quantity(for: .appleWatchSimilarToLeadI) {
-                    let voltage = voltageQuantity.doubleValue(for: HKUnit.volt())
-                    let timeSinceSampleStart = measurement.timeSinceSampleStart
-                    voltageValues.append(["voltage": voltage, "timeSinceSampleStart": timeSinceSampleStart])
+    private func fetchEcgMeasurements(_ ecgSample: [HKElectrocardiogram], _ result: @escaping FlutterResult) {
+        let group = DispatchGroup()
+        var dictionaries = [NSDictionary]()
+        let lock = NSLock()
+
+        for ecg in ecgSample {
+            group.enter()
+
+            var voltageValues = [[String: Any]]()
+                let expected = Int(ecg.numberOfVoltageMeasurements)
+                if expected > 0 {
+                    voltageValues.reserveCapacity(expected)
                 }
-            case .done:
-                semaphore.signal()
-            case let .error(error):
-                print(error)
-            @unknown default:
-                print("Unknown error occurred")
+            
+            let q = HKElectrocardiogramQuery(ecg) { _, res in
+                switch res {
+                case .measurement(let m):
+                    if let v = m.quantity(for: .appleWatchSimilarToLeadI)?
+                        .doubleValue(for: HKUnit.volt()) {
+                        voltageValues.append([
+                            "voltage": v,
+                            "timeSinceSampleStart": m.timeSinceSampleStart
+                        ])
+                    }
+                case .done:
+                    let dict: NSDictionary = [
+                        "uuid": "\(ecg.uuid)",
+                        "voltageValues": voltageValues,
+                        "averageHeartRate": ecg.averageHeartRate?
+                            .doubleValue(for: HKUnit.count()
+                                .unitDivided(by: HKUnit.minute())),
+                        "samplingFrequency": ecg.samplingFrequency?
+                            .doubleValue(for: HKUnit.hertz()),
+                        "classification": ecg.classification.rawValue,
+                        "date_from": Int(ecg.startDate.timeIntervalSince1970 * 1000),
+                        "date_to": Int(ecg.endDate.timeIntervalSince1970 * 1000),
+                        "source_id": ecg.sourceRevision.source.bundleIdentifier,
+                        "source_name": ecg.sourceRevision.source.name
+                    ]
+                    lock.lock()
+                    dictionaries.append(dict)
+                    lock.unlock()
+                    group.leave()
+                case .error(let e):
+                    print("ECG query error: \(e)")
+                    group.leave()
+                @unknown default:
+                    print("ECG query unknown result")
+                    group.leave()
+                }
             }
+            self.healthStore.execute(q)
         }
-        healthStore.execute(voltageQuery)
-        semaphore.wait()
-        return [
-            "uuid": "\(sample.uuid)",
-            "voltageValues": voltageValues,
-            "averageHeartRate": sample.averageHeartRate?.doubleValue(
-                for: HKUnit.count().unitDivided(by: HKUnit.minute())),
-            "samplingFrequency": sample.samplingFrequency?.doubleValue(for: HKUnit.hertz()),
-            "classification": sample.classification.rawValue,
-            "date_from": Int(sample.startDate.timeIntervalSince1970 * 1000),
-            "date_to": Int(sample.endDate.timeIntervalSince1970 * 1000),
-            "source_id": sample.sourceRevision.source.bundleIdentifier,
-            "source_name": sample.sourceRevision.source.name,
-        ]
+
+        group.notify(queue: .main) {
+            result(dictionaries)
+        }
     }
 }

@@ -3,14 +3,14 @@ description: Demonstrates how to use the audio_streamer plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=3.8.1 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  permission_handler: ^11.0.0  
+  permission_handler: ^12.0.0
   cupertino_icons: ^1.0.4
 
 dev_dependencies:

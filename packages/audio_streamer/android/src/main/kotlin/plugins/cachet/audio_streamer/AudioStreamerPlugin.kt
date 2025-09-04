@@ -34,7 +34,9 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
 
     // / Variables (i.e. will change value)
     private var eventSink: EventSink? = null
-    private var recording = false
+    @Volatile private var recording = false
+    private var recordingThread: Thread? = null
+
 
     private var currentActivity: Activity? = null
 
@@ -48,8 +50,11 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
         methodChannel.setMethodCallHandler {
                 call, result ->
             if (call.method == "getSampleRate") {
-                // Sample rate never changes, so return the given sample rate.
-                result.success(audioRecord?.getSampleRate())
+                if (::audioRecord.isInitialized) {
+                    result.success(audioRecord.sampleRate)
+                } else {
+                    result.error("UNAVAILABLE", "AudioRecord not initialized.", null)
+                }
             } else {
                 result.notImplemented()
             }
@@ -57,7 +62,7 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        recording = false
+        stopRecording()
     }
 
     override fun onDetachedFromActivity() {
@@ -83,20 +88,19 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
      */
     override fun onListen(arguments: Any?, events: EventSink?) {
         this.eventSink = events
-        recording = true
         sampleRate = (arguments as Map<*, *>)["sampleRate"] as Int
         if (sampleRate < 4000 || sampleRate > 48000) {
             events!!.error("SampleRateError", "A sample rate of " + sampleRate + "Hz is not supported by Android.", null)
             return
         }
-        streamMicData()
+        startRecording()
     }
 
     /**
      * Called from Flutter, which cancels the stream.
      */
     override fun onCancel(arguments: Any?) {
-        recording = false
+        stopRecording()
     }
 
     /**
@@ -105,10 +109,35 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray): Boolean {
         val requestAudioPermissionCode = 200
         when (requestCode) {
-            requestAudioPermissionCode -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) return true
+            requestAudioPermissionCode -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) return true
         }
         return false
     }
+
+    private fun startRecording() {
+        if (recording) {
+            Log.w(logTag, "Recording is already in progress")
+            return
+        }
+        recording = true
+        recordingThread = Thread { streamMicData() }
+        recordingThread?.start()
+    }
+
+    private fun stopRecording() {
+        if (!recording) {
+            Log.w(logTag, "Recording is not in progress")
+            return
+        }
+        recording = false
+        try {
+            recordingThread?.join()
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        recordingThread = null
+    }
+
 
     /**
      * Starts recording and streaming audio data from the mic.
@@ -119,39 +148,51 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
      * https://www.newventuresoftware.com/blog/record-play-and-visualize-raw-audio-data-in-android
      */
     private fun streamMicData() {
-        Thread(
-            Runnable {
-                Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
-                val audioBuffer = ShortArray(bufferSize / 2)
-                audioRecord = AudioRecord(
-                    MediaRecorder.AudioSource.DEFAULT,
-                    sampleRate,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    bufferSize,
-                )
-                if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
-                    Log.e(logTag, "Audio Record can't initialize!")
-                    return@Runnable
-                }
-                /** Start recording loop  */
-                audioRecord.startRecording()
-                while (recording) {
-                    /** Read data into buffer  */
-                    audioRecord.read(audioBuffer, 0, audioBuffer.size)
+        Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO)
+
+        val audioBuffer = ShortArray(bufferSize / 2)
+        try {
+            audioRecord = AudioRecord(
+                MediaRecorder.AudioSource.DEFAULT,
+                sampleRate,
+                AudioFormat.CHANNEL_IN_MONO,
+                AudioFormat.ENCODING_PCM_16BIT,
+                bufferSize,
+            )
+
+            if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
+                Log.e(logTag, "Audio Record can't initialize!")
+                eventSink?.error("MIC_ERROR", "Audio Record can't initialize!", null)
+                recording = false
+                return
+            }
+
+            audioRecord.startRecording()
+
+            while (recording) {
+                val readSize = audioRecord.read(audioBuffer, 0, audioBuffer.size)
+                if(readSize > 0) {
+                    val audioBufferList = ArrayList<Double>()
+                    for (i in 0 until readSize) {
+                        val normalizedImpulse = audioBuffer[i].toDouble() / maxAmplitude.toDouble()
+                        audioBufferList.add(normalizedImpulse)
+                    }
                     Handler(Looper.getMainLooper()).post {
-                        // / Convert to list in order to send via EventChannel.
-                        val audioBufferList = ArrayList<Double>()
-                        for (impulse in audioBuffer) {
-                            val normalizedImpulse = impulse.toDouble() / maxAmplitude.toDouble()
-                            audioBufferList.add(normalizedImpulse)
-                        }
-                        eventSink!!.success(audioBufferList)
+                        eventSink?.success(audioBufferList)
                     }
                 }
-                audioRecord.stop()
+            }
+        } catch (e: Exception) {
+            Log.e(logTag, "Error while recording audio", e)
+            eventSink?.error("MIC_ERROR", "Error while recording audio", e.message)
+        } finally {
+            if (::audioRecord.isInitialized) {
+                if (audioRecord.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+                    audioRecord.stop()
+                }
                 audioRecord.release()
-            },
-        ).start()
+            }
+            recording = false
+        }
     }
 }
