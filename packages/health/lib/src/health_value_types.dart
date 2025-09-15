@@ -144,19 +144,24 @@ class WorkoutHealthValue extends HealthValue {
   /// Might not be available for all workouts.
   HealthDataUnit? totalStepsUnit;
 
-  WorkoutHealthValue({
-    required this.workoutActivityType,
-    this.totalEnergyBurned,
-    this.totalEnergyBurnedUnit,
-    this.totalDistance,
-    this.totalDistanceUnit,
-    this.totalSteps,
-    this.totalStepsUnit,
+  /// Raw workoutActivityType from native data format.
+  String? rawWorkoutActivityType;
+
+  WorkoutHealthValue(
+      {required this.workoutActivityType,
+      this.totalEnergyBurned,
+      this.totalEnergyBurnedUnit,
+      this.totalDistance,
+      this.totalDistanceUnit,
+      this.totalSteps,
+      this.totalStepsUnit,
+      this.rawWorkoutActivityType,
   });
 
   /// Create a [WorkoutHealthValue] based on a health data point from native data format.
   factory WorkoutHealthValue.fromHealthDataPoint(dynamic dataPoint) =>
       WorkoutHealthValue(
+        rawWorkoutActivityType: dataPoint['workoutActivityType'] as String?,
         workoutActivityType: HealthWorkoutActivityType.values.firstWhere(
           (element) => element.name == dataPoint['workoutActivityType'],
           orElse: () => HealthWorkoutActivityType.OTHER,
@@ -197,6 +202,7 @@ class WorkoutHealthValue extends HealthValue {
   @override
   String toString() =>
       """$runtimeType - workoutActivityType: ${workoutActivityType.name},
+           rawWorkoutActivityType: $rawWorkoutActivityType,
            totalEnergyBurned: $totalEnergyBurned,
            totalEnergyBurnedUnit: ${totalEnergyBurnedUnit?.name},
            totalDistance: $totalDistance,
@@ -207,6 +213,7 @@ class WorkoutHealthValue extends HealthValue {
   @override
   bool operator ==(Object other) =>
       other is WorkoutHealthValue &&
+      rawWorkoutActivityType == other.rawWorkoutActivityType &&
       workoutActivityType == other.workoutActivityType &&
       totalEnergyBurned == other.totalEnergyBurned &&
       totalEnergyBurnedUnit == other.totalEnergyBurnedUnit &&
@@ -218,6 +225,7 @@ class WorkoutHealthValue extends HealthValue {
   @override
   int get hashCode => Object.hash(
     workoutActivityType,
+    rawWorkoutActivityType,
     totalEnergyBurned,
     totalEnergyBurnedUnit,
     totalDistance,
