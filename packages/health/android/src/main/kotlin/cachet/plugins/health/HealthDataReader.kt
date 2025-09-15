@@ -106,7 +106,7 @@ class HealthDataReader(
                     "Unable to return $dataType due to the following exception:"
                 )
                 Log.e("FLUTTER_HEALTH::ERROR", Log.getStackTraceString(e))
-                result.success(null)
+                result.error("UNAVAILABLE", "Data not available", null)
             }
         }
     }
