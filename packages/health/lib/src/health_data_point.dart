@@ -209,6 +209,17 @@ class HealthDataPoint {
       deviceModel == other.deviceModel;
 
   @override
-  int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceModel);
+  int get hashCode => Object.hash(
+      uuid,
+      value,
+      unit,
+      dateFrom,
+      dateTo,
+      type,
+      sourcePlatform,
+      sourceDeviceId,
+      sourceId,
+      sourceName,
+      metadata,
+      deviceModel);
 }

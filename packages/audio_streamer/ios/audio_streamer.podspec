@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'audio_streamer'
-  s.version          = '0.0.1'
+  s.version          = '4.3.0'
   s.summary          = 'Streaming of PCM audio from Android and iOS'
   s.description      = <<-DESC
 Streaming of PCM audio from Android and iOS
