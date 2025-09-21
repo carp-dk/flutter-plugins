@@ -10,7 +10,7 @@ class Pedometer {
       const EventChannel('step_detection');
   static const EventChannel _stepCountChannel =
       const EventChannel('step_count');
-
+  static const _platform = MethodChannel('com.example.pedometer');
   static StreamController<PedestrianStatus> _androidPedestrianController =
       StreamController.broadcast();
 
@@ -23,7 +23,14 @@ class Pedometer {
     if (Platform.isAndroid) return _androidStream(stream);
     return stream;
   }
-
+  static Future<bool?> get isStepDetectionSupported {
+    Future<bool?> result =  _platform.invokeMethod<bool>("isStepDetectionSupported");
+    return result;
+  }
+  static Future<bool?> get isStepCountSupported {
+    Future<bool?> result =  _platform.invokeMethod<bool>("isStepCountSupported");
+    return result;
+  }
   /// Transformed stream for the Android platform
   static Stream<PedestrianStatus> _androidStream(
       Stream<PedestrianStatus> stream) {

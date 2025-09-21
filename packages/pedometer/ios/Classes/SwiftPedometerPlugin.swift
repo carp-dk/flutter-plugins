@@ -14,6 +14,24 @@ public class SwiftPedometerPlugin: NSObject, FlutterPlugin {
         let stepCountHandler = StepCounter()
         let stepCountChannel = FlutterEventChannel.init(name: "step_count", binaryMessenger: registrar.messenger())
         stepCountChannel.setStreamHandler(stepCountHandler)
+
+        let methodChannel = FlutterMethodChannel(name: "com.example.pedometer",
+                                                      binaryMessenger: registrar.messenger())
+        methodChannel.setMethodCallHandler({
+          (call: FlutterMethodCall, result: FlutterResult) -> Void in
+          // This method is invoked on the UI thread.
+          guard call.method == "isStepDetectionSupported" || call.method == "isStepCountSupported" else {
+            result(FlutterMethodNotImplemented)
+            return
+          }
+          if call.method == "isStepCountSupported"{
+                    result(CMPedometer.isStepCountingAvailable())
+
+          }
+          else if call.method == "isStepDetectionSupported" {
+                    result(CMPedometer.isPedometerEventTrackingAvailable())
+          }
+        })
     }
 }
 
