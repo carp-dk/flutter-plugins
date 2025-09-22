@@ -33,7 +33,10 @@ public class ActivityRecognizedService extends JobIntentService {
     // remove override and make onHandleIntent private.
     private void onHandleIntent(@Nullable Intent intent) {
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
+        if (result == null) return;
+
         List<DetectedActivity> activities = result.getProbableActivities();
+        if (activities == null || activities.isEmpty()) return;
 
         DetectedActivity mostLikely = activities.get(0);
 
@@ -54,6 +57,7 @@ public class ActivityRecognizedService extends JobIntentService {
         SharedPreferences preferences =
                 getApplicationContext().getSharedPreferences(
                         ActivityRecognitionFlutterPlugin.ACTIVITY_RECOGNITION, MODE_PRIVATE);
+        if (preferences == null) return;
 
         preferences.edit().clear()
                 .putString(
