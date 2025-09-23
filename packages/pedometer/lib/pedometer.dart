@@ -24,6 +24,11 @@ class Pedometer {
     return stream;
   }
 
+  /// Returns every time a step is detected.
+  /// This works only on Android. On IOS is will only return if the [PedestrianStatus] changes.
+  static Stream<void> get stepStream =>
+      _stepDetectionChannel.receiveBroadcastStream();
+
   /// Transformed stream for the Android platform
   static Stream<PedestrianStatus> _androidStream(
       Stream<PedestrianStatus> stream) {
