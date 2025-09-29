@@ -4,13 +4,13 @@ version: 5.1.0
 homepage: https://github.com/cph-cachet/flutter-plugins/tree/master/packages/noise_meter
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=3.8.1 <4.0.0"
   flutter: ">=3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  audio_streamer: ^4.0.0
+  audio_streamer: ^4.3.0
 
 dev_dependencies:
   flutter_test:

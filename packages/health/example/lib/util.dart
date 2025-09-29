@@ -52,7 +52,7 @@ const List<HealthDataType> dataTypesIOS = [
   HealthDataType.LEAN_BODY_MASS,
 
   // note that a phone cannot write these ECG-based types - only read them
-  // HealthDataType.ELECTROCARDIOGRAM,
+  HealthDataType.ELECTROCARDIOGRAM,
   // HealthDataType.HIGH_HEART_RATE_EVENT,
   // HealthDataType.IRREGULAR_HEART_RATE_EVENT,
   // HealthDataType.LOW_HEART_RATE_EVENT,

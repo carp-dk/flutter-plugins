@@ -112,9 +112,7 @@ class HealthDataPoint {
 
   /// Create a [HealthDataPoint] based on a health data point from native data format.
   factory HealthDataPoint.fromHealthDataPoint(
-    HealthDataType dataType,
-    dynamic dataPoint,
-  ) {
+      HealthDataType dataType, dynamic dataPoint, String? unitName) {
     // Handling different [HealthValue] types
     HealthValue value = switch (dataType) {
       HealthDataType.AUDIOGRAM =>
@@ -141,7 +139,9 @@ class HealthDataPoint {
     final Map<String, dynamic>? metadata = dataPoint["metadata"] == null
         ? null
         : Map<String, dynamic>.from(dataPoint['metadata'] as Map);
-    final unit = dataTypeToUnit[dataType] ?? HealthDataUnit.UNKNOWN_UNIT;
+    final HealthDataUnit unit = HealthDataUnit.values.firstWhere(
+        (value) => value.name == unitName,
+        orElse: () => dataTypeToUnit[dataType] ?? HealthDataUnit.UNKNOWN_UNIT);
     final String? uuid = dataPoint["uuid"] as String?;
     final String? deviceModel = dataPoint["device_model"] as String?;
 
@@ -209,6 +209,17 @@ class HealthDataPoint {
       deviceModel == other.deviceModel;
 
   @override
-  int get hashCode => Object.hash(uuid, value, unit, dateFrom, dateTo, type,
-      sourcePlatform, sourceDeviceId, sourceId, sourceName, metadata, deviceModel);
+  int get hashCode => Object.hash(
+      uuid,
+      value,
+      unit,
+      dateFrom,
+      dateTo,
+      type,
+      sourcePlatform,
+      sourceDeviceId,
+      sourceId,
+      sourceName,
+      metadata,
+      deviceModel);
 }

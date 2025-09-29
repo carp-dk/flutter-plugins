@@ -77,6 +77,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         case "getData":
             healthDataReader.getData(call: call, result: result)
             
+        case "getDataByUUID":
+            healthDataReader.getDataByUUID(call: call, result: result)
+            
         case "getIntervalData":
             healthDataReader.getIntervalData(call: call, result: result)
             

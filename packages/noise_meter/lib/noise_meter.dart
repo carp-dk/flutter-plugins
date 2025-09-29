@@ -1,5 +1,3 @@
-library noise_meter;
-
 import 'dart:core';
 import 'dart:math';
 

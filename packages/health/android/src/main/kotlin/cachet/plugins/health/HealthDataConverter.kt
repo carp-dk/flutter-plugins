@@ -21,20 +21,34 @@ class HealthDataConverter {
      * @return List<Map<String, Any?>> List of converted records (some records may split into multiple entries)
      * @throws IllegalArgumentException If the record type is not supported
      */
-    fun convertRecord(record: Any, dataType: String): List<Map<String, Any?>> {
+    fun convertRecord(record: Any, dataType: String, dataUnit: String? = null): List<Map<String, Any?>> {
         val metadata = (record as Record).metadata
         
         return when (record) {
             // Single-value instant records
-            is WeightRecord -> listOf(createInstantRecord(metadata, record.time, record.weight.inKilograms))
-            is HeightRecord -> listOf(createInstantRecord(metadata, record.time, record.height.inMeters))
+            is WeightRecord -> listOf(createInstantRecord(metadata, record.time, when (dataUnit) {
+                                "POUND" -> record.weight.inPounds
+                                else -> record.weight.inKilograms
+                            }))
+            is HeightRecord -> listOf(createInstantRecord(metadata, record.time, when (dataUnit) {
+                                "CENTIMETER" -> (record.height.inMeters * 100)
+                                "INCH" -> record.height.inInches
+                                else -> record.height.inMeters
+                            }))
             is BodyFatRecord -> listOf(createInstantRecord(metadata, record.time, record.percentage.value))
             is LeanBodyMassRecord -> listOf(createInstantRecord(metadata, record.time, record.mass.inKilograms))
             is HeartRateVariabilityRmssdRecord -> listOf(createInstantRecord(metadata, record.time, record.heartRateVariabilityMillis))
-            is BodyTemperatureRecord -> listOf(createInstantRecord(metadata, record.time, record.temperature.inCelsius))
+            is BodyTemperatureRecord -> listOf(createInstantRecord(metadata, record.time, when (dataUnit) {
+                                "DEGREE_FAHRENHEIT" -> record.temperature.inFahrenheit
+                                "KELVIN" -> record.temperature.inCelsius + 273.15
+                                else -> record.temperature.inCelsius
+                            }))
             is BodyWaterMassRecord -> listOf(createInstantRecord(metadata, record.time, record.mass.inKilograms))
             is OxygenSaturationRecord -> listOf(createInstantRecord(metadata, record.time, record.percentage.value))
-            is BloodGlucoseRecord -> listOf(createInstantRecord(metadata, record.time, record.level.inMilligramsPerDeciliter))
+            is BloodGlucoseRecord -> listOf(createInstantRecord(metadata, record.time, when (dataUnit) {
+                                "MILLIMOLES_PER_LITER" -> record.level.inMillimolesPerLiter
+                                else -> record.level.inMilligramsPerDeciliter
+                            }))
             is BasalMetabolicRateRecord -> listOf(createInstantRecord(metadata, record.time, record.basalMetabolicRate.inKilocaloriesPerDay))
             is RestingHeartRateRecord -> listOf(createInstantRecord(metadata, record.time, record.beatsPerMinute))
             is RespiratoryRateRecord -> listOf(createInstantRecord(metadata, record.time, record.rate))
@@ -236,7 +250,7 @@ class HealthDataConverter {
             )
         )
     }
-    
+
     companion object {
         private const val BLOOD_PRESSURE_DIASTOLIC = "BLOOD_PRESSURE_DIASTOLIC"
         private const val MEAL_UNKNOWN = "UNKNOWN"

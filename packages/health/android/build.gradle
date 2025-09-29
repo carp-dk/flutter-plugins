@@ -9,7 +9,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.4'
+        classpath 'com.android.tools.build:gradle:8.13.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdk 34
+    compileSdk 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -41,7 +41,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 26
-        targetSdkVersion 34
+        targetSdkVersion 36
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -51,12 +51,11 @@ android {
 }
 
 dependencies {
-    def composeBom = platform('androidx.compose:compose-bom:2025.02.00')
+    def composeBom = platform('androidx.compose:compose-bom:2025.09.00')
     implementation(composeBom)
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.2.10"
 
-    implementation("androidx.health.connect:connect-client:1.1.0-alpha11")
-    def fragment_version = "1.8.6"
-    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    implementation("androidx.health.connect:connect-client:1.1.0-rc03")
+    implementation "androidx.fragment:fragment-ktx:1.8.9"
 
 }

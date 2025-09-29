@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.util.Log
 import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.*
 import androidx.health.connect.client.request.AggregateGroupByDurationRequest
 import androidx.health.connect.client.request.AggregateRequest
@@ -40,6 +41,7 @@ class HealthDataReader(
      */
     fun getData(call: MethodCall, result: Result) {
         val dataType = call.argument<String>("dataTypeKey")!!
+        val dataUnit: String? = call.argument<String>("dataUnitKey")
         val startTime = Instant.ofEpochMilli(call.argument<Long>("startTime")!!)
         val endTime = Instant.ofEpochMilli(call.argument<Long>("endTime")!!)
         val healthConnectData = mutableListOf<Map<String, Any?>>()
@@ -47,12 +49,19 @@ class HealthDataReader(
 
         Log.i(
             "FLUTTER_HEALTH",
-            "Getting data for $dataType between $startTime and $endTime, filtering by $recordingMethodsToFilter"
+            "Getting data for $dataType with unit $dataUnit between $startTime and $endTime, filtering by $recordingMethodsToFilter"
         )
 
         scope.launch {
             try {
-                HealthConstants.mapToType[dataType]?.let { classType ->
+                val grantedPermissions = healthConnectClient.permissionController.getGrantedPermissions()
+
+                val authorizedTypeMap = HealthConstants.mapToType.filter { (typeKey, classType) ->
+                    val requiredPermission = HealthPermission.getReadPermission(classType)
+                    grantedPermissions.contains(requiredPermission)
+                }
+
+                authorizedTypeMap[dataType]?.let { classType ->
                     val records = mutableListOf<Record>()
 
                     // Set up the initial request to read health records
@@ -92,7 +101,7 @@ class HealthDataReader(
                             )
                             for (rec in filteredRecords) {
                                 healthConnectData.addAll(
-                                    dataConverter.convertRecord(rec, dataType)
+                                    dataConverter.convertRecord(rec, dataType, dataUnit)
                                 )
                             }
                         }
@@ -105,6 +114,76 @@ class HealthDataReader(
                     "Unable to return $dataType due to the following exception:"
                 )
                 Log.e("FLUTTER_HEALTH::ERROR", Log.getStackTraceString(e))
+                result.success(emptyList<Map<String, Any?>>()) // Return empty list instead of null
+            }
+        }
+    }
+
+    /**
+     * Retrieves single health data point by given UUID and type.
+     * 
+     * @param call Method call containing 'UUID' and 'dataTypeKey'
+     * @param result Flutter result callback returning list of health data maps
+     */
+    fun getDataByUUID(call: MethodCall, result: Result) {
+        val dataType = call.argument<String>("dataTypeKey")!!
+        val uuid = call.argument<String>("uuid")!!
+        var healthPoint = mapOf<String, Any?>()
+
+        if (!HealthConstants.mapToType.containsKey(dataType)) {
+            Log.w("FLUTTER_HEALTH::ERROR", "Datatype $dataType not found in HC")
+            result.success(null)
+            return
+        }
+
+        val classType = HealthConstants.mapToType[dataType]!!
+
+        scope.launch {
+            try {
+
+                Log.i("FLUTTER_HEALTH", "Getting $uuid with $classType")
+
+                // Execute the request
+                val response = healthConnectClient.readRecord(classType, uuid)
+
+                // Find the record with the matching UUID
+                val matchingRecord = response.record
+
+                if (matchingRecord != null) {
+                    // Handle special cases using shared logic
+                    when (dataType) {
+                        WORKOUT -> {
+                            val tempData = mutableListOf<Map<String, Any?>>()
+                            handleWorkoutData(listOf(matchingRecord), emptyList(), tempData)
+                            healthPoint = if (tempData.isNotEmpty()) tempData[0] else mapOf()
+                        }
+                        SLEEP_SESSION, SLEEP_ASLEEP, SLEEP_AWAKE, SLEEP_AWAKE_IN_BED,
+                        SLEEP_LIGHT, SLEEP_DEEP, SLEEP_REM, SLEEP_OUT_OF_BED, SLEEP_UNKNOWN -> {
+                            if (matchingRecord is SleepSessionRecord) {
+                                val tempData = mutableListOf<Map<String, Any?>>()
+                                handleSleepData(listOf(matchingRecord), emptyList(), dataType, tempData)
+                                healthPoint = if (tempData.isNotEmpty()) tempData[0] else mapOf()
+                            }
+                        }
+                        else -> {
+                            healthPoint = dataConverter.convertRecord(matchingRecord, dataType)[0]
+                        }
+                    }
+
+                    Log.i(
+                        "FLUTTER_HEALTH",
+                        "Success: $healthPoint"
+                    )
+
+                    Handler(context.mainLooper).run { result.success(healthPoint) }
+                } else {
+                    Log.e("FLUTTER_HEALTH::ERROR", "Record not found for UUID: $uuid")
+                    result.success(null)
+                }
+            } catch (e: Exception) {
+                Log.e("FLUTTER_HEALTH::ERROR", "Error fetching record with UUID: $uuid")
+                Log.e("FLUTTER_HEALTH::ERROR", e.message ?: "unknown error")
+                Log.e("FLUTTER_HEALTH::ERROR", e.stackTraceToString())
                 result.success(null)
             }
         }
@@ -289,18 +368,22 @@ class HealthDataReader(
      * by querying related records within the workout time period.
      * 
      * @param records List of ExerciseSessionRecord objects
-     * @param recordingMethodsToFilter Recording methods to exclude
+     * @param recordingMethodsToFilter Recording methods to exclude (empty list means no filtering)
      * @param healthConnectData Mutable list to append processed workout data
      */
     private suspend fun handleWorkoutData(
         records: List<Record>,
-        recordingMethodsToFilter: List<Int>,
+        recordingMethodsToFilter: List<Int> = emptyList(),
         healthConnectData: MutableList<Map<String, Any?>>
     ) {
-        val filteredRecords = recordingFilter.filterRecordsByRecordingMethods(
-            recordingMethodsToFilter,
+        val filteredRecords = if (recordingMethodsToFilter.isEmpty()) {
             records
-        )
+        } else {
+            recordingFilter.filterRecordsByRecordingMethods(
+                recordingMethodsToFilter,
+                records
+            )
+        }
 
         for (rec in filteredRecords) {
             val record = rec as ExerciseSessionRecord
@@ -366,8 +449,8 @@ class HealthDataReader(
                     "totalSteps" to if (totalSteps == 0.0) null else totalSteps,
                     "totalStepsUnit" to "COUNT",
                     "unit" to "MINUTES",
-                    "date_from" to rec.startTime.toEpochMilli(),
-                    "date_to" to rec.endTime.toEpochMilli(),
+                    "date_from" to record.startTime.toEpochMilli(),
+                    "date_to" to record.endTime.toEpochMilli(),
                     "source_id" to "",
                     "source_name" to record.metadata.dataOrigin.packageName,
                 ),
@@ -381,20 +464,24 @@ class HealthDataReader(
      * Converts sleep stage enumerations to meaningful duration and type information.
      * 
      * @param records List of SleepSessionRecord objects
-     * @param recordingMethodsToFilter Recording methods to exclude
+     * @param recordingMethodsToFilter Recording methods to exclude (empty list means no filtering)
      * @param dataType Specific sleep data type being requested
      * @param healthConnectData Mutable list to append processed sleep data
      */
     private fun handleSleepData(
         records: List<Record>,
-        recordingMethodsToFilter: List<Int>,
+        recordingMethodsToFilter: List<Int> = emptyList(),
         dataType: String,
         healthConnectData: MutableList<Map<String, Any?>>
     ) {
-        val filteredRecords = recordingFilter.filterRecordsByRecordingMethods(
-            recordingMethodsToFilter,
+        val filteredRecords = if (recordingMethodsToFilter.isEmpty()) {
             records
-        )
+        } else {
+            recordingFilter.filterRecordsByRecordingMethods(
+                recordingMethodsToFilter,
+                records
+            )
+        }
 
         for (rec in filteredRecords) {
             if (rec is SleepSessionRecord) {
