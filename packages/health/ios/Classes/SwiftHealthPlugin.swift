@@ -438,6 +438,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         dataTypesDict[HealthConstants.SLEEP_REM] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
         dataTypesDict[HealthConstants.SLEEP_ASLEEP] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
         dataTypesDict[HealthConstants.MENSTRUATION_FLOW] = HKSampleType.categoryType(forIdentifier: .menstrualFlow)!
+        dataTypesDict[HealthConstants.CERVICAL_MUCUS_QUALITY] = HKSampleType.categoryType(forIdentifier: .cervicalMucusQuality)!
+        dataTypesDict[HealthConstants.OVULATION_TEST_RESULT] = HKSampleType.categoryType(forIdentifier: .ovulationTestResult)!
+        dataTypesDict[HealthConstants.PREGNANCY_TEST_RESULTS] = HKSampleType.categoryType(forIdentifier: .pregnancyTestResult)!
         
         dataTypesDict[HealthConstants.EXERCISE_TIME] = HKSampleType.quantityType(forIdentifier: .appleExerciseTime)!
         dataTypesDict[HealthConstants.WORKOUT] = HKSampleType.workoutType()
