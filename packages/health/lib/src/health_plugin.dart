@@ -506,7 +506,7 @@ class Health {
   ///
   /// Values for Sleep and Headache are ignored and will be automatically assigned
   /// the default value.
-  Future<HealthDataPoint?> writeHealthData({
+  Future<String?> writeHealthData({
     required double value,
     HealthDataUnit? unit,
     required HealthDataType type,
@@ -582,9 +582,7 @@ class Health {
 
     String uuid = '${await _channel.invokeMethod('writeData', args)}';
 
-    final healthPoint = await getHealthDataByUUID(uuid: uuid, type: type);
-
-    return healthPoint;
+    return uuid;
   }
 
   /// Deletes all records of the given [type] for a given period of time.
@@ -1506,7 +1504,7 @@ class Health {
   ///  - [title] The title of the workout.
   ///    *ONLY FOR HEALTH CONNECT* Default value is the [activityType], e.g. "STRENGTH_TRAINING".
   ///  - [recordingMethod] The recording method of the data point, automatic by default (on iOS this can only be automatic or manual).
-  Future<HealthDataPoint?> writeWorkoutData({
+  Future<String?> writeWorkoutData({
     required HealthWorkoutActivityType activityType,
     required DateTime start,
     required DateTime end,
@@ -1552,12 +1550,7 @@ class Health {
 
     String uuid = '${await _channel.invokeMethod('writeWorkoutData', args)}';
 
-    final healthPoint = await getHealthDataByUUID(
-      uuid: uuid,
-      type: HealthDataType.WORKOUT,
-    );
-
-    return healthPoint;
+    return uuid;
   }
 
   /// Check if the given [HealthWorkoutActivityType] is supported on the iOS platform
