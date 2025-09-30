@@ -1,6 +1,6 @@
 # Health
 
-<!-- ryanTempdrop: Last updated Tue Sep 30 13:08:38 IDT 2025 - BASAL_BODY_TEMPERATURE fix applied -->
+<!-- ryanTempdrop: Last updated Tue Sep 30 14:04:51 IDT 2025 - Added BASAL_BODY_TEMPERATURE, CERVICAL_MUCUS_QUALITY, OVULATION_TEST_RESULT, PREGNANCY_TEST_RESULTS -->
 
 Enables reading and writing health data from/to [Apple Health](https://www.apple.com/health/) and [Google Health Connect](https://health.google/health-connect-android/).
 
