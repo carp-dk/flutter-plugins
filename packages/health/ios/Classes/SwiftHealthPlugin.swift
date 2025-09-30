@@ -410,6 +410,7 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         dataTypesDict[HealthConstants.LEAN_BODY_MASS] = HKSampleType.quantityType(forIdentifier: .leanBodyMass)!
         dataTypesDict[HealthConstants.BODY_MASS_INDEX] = HKSampleType.quantityType(forIdentifier: .bodyMassIndex)!
         dataTypesDict[HealthConstants.BODY_TEMPERATURE] = HKSampleType.quantityType(forIdentifier: .bodyTemperature)!
+        dataTypesDict[HealthConstants.BASAL_BODY_TEMPERATURE] = HKSampleType.quantityType(forIdentifier: .basalBodyTemperature)!
         
         // Initialize nutrition types
         initializeNutritionTypes()
