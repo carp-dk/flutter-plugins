@@ -1,3 +1,29 @@
+## 13.2.0
+
+* Add get health data by UUID (see `getHealthDataByUUID()`) - PR [#1193](https://github.com/carp-dk/flutter-plugins/pull/1193), [#1194](https://github.com/carp-dk/flutter-plugins/pull/1194)
+* Add delete by UUID (`deleteByUUID()`)
+* Add support for unit conversion in `WeightRecord`, `HeightRecord`, `BodyTemperatureRecord`, and `BloodGlucoseRecord` - PR [#1212](https://github.com/carp-dk/flutter-plugins/pull/1223)
+* Update `compileSDK` to 36 - Fix [#1261](https://github.com/carp-dk/flutter-plugins/issues/1261)
+* Update Gradle to 8.9.1
+* Update `org.jetbrains.kotlin.android` to 2.1.0
+* Update `androidx.health.connect:connect-client` to 1.1.0-rc03
+* Update `device_info_plus` to 12.1.0 - Fix [#1264](https://github.com/carp-dk/flutter-plugins/issues/1264)
+
+## 13.1.4
+
+* Fix adding mindfulness resulted in crash in iOS
+* Support SPM for iOS
+
+## 13.1.3
+
+* Fix permissions issues with iOS
+* Fix [#1231](https://github.com/cph-cachet/flutter-plugins/issues/1231)
+
+## 13.1.2
+
+* Fix [#1250](https://github.com/cph-cachet/flutter-plugins/issues/1250)
+* Fix [#1233](https://github.com/cph-cachet/flutter-plugins/issues/1233)
+
 ## 13.1.1
 
 * Fix [#1207](https://github.com/cph-cachet/flutter-plugins/issues/1207) - (**Important**: Some property names might have changed compared to before for `Nutrition`)
@@ -14,6 +40,7 @@
 ## 13.0.1
 
 * Refactored Swift native implementation - See PR [#1175](https://github.com/cph-cachet/flutter-plugins/pull/1175) and [#1208](https://github.com/cph-cachet/flutter-plugins/pull/1208) for more information:
+
 ```
 SwiftHealthPlugin (Main Plugin Class)
 ├── HealthDataReader (Reading health data)
@@ -44,10 +71,12 @@ SwiftHealthPlugin (Main Plugin Class)
 * iOS: Parse metadata to remove unsupported types - PR [#1120](https://github.com/cph-cachet/flutter-plugins/pull/1120)
 * iOS: Add UV Index Types
 * Android: Add request access to historic data [#1126](https://github.com/cph-cachet/flutter-plugins/issues/1126) - PR [#1127](https://github.com/cph-cachet/flutter-plugins/pull/1127)
+
 ```XML
 <!-- Add the following permission into AndroidManifest.xml -->
 <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_HISTORY"/>
 ```
+
 * Android:
   * Update `androidx.compose:compose-bom` to `2025.02.00`
   * Update `androidx.health.connect:connect-client` to `1.1.0-alpha11`
@@ -75,10 +104,12 @@ SwiftHealthPlugin (Main Plugin Class)
   * Fix [#984](https://github.com/cph-cachet/flutter-plugins/issues/984) - PR [#1055](https://github.com/cph-cachet/flutter-plugins/pull/1055)
 * Add `LEAN_BODY_MASS` data type [#1078](https://github.com/cph-cachet/flutter-plugins/issues/1078) - PR [#1097](https://github.com/cph-cachet/flutter-plugins/pull/1097)
   * The following AndroidManifest values are required to READ/WRITE `LEAN_BODY_MASS`:
+
   ```XML
   <uses-permission android:name="android.permission.health.READ_LEAN_BODY_MASS"/>
   <uses-permission android:name="android.permission.health.WRITE_LEAN_BODY_MASS"/>
   ```
+
 * iOS: Add `WATER_TEMPERATURE` and `UNDERWATER_DEPTH` health values [#1096](https://github.com/cph-cachet/flutter-plugins/issues/1096)
 * iOS: Add support for `Underwater Diving` workout [#1096](https://github.com/cph-cachet/flutter-plugins/issues/1096)
 * Fix [#1072](https://github.com/cph-cachet/flutter-plugins/issues/1072) and [#1074](https://github.com/cph-cachet/flutter-plugins/issues/1074)
