@@ -102,6 +102,7 @@ enum HealthDataType {
   BIRTH_DATE,
   BLOOD_TYPE,
   MENSTRUATION_FLOW,
+  BASAL_BODY_TEMPERATURE,
   WATER_TEMPERATURE,
   UNDERWATER_DEPTH,
 
@@ -220,6 +221,7 @@ const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.BIRTH_DATE,
   HealthDataType.BLOOD_TYPE,
   HealthDataType.MENSTRUATION_FLOW,
+  HealthDataType.BASAL_BODY_TEMPERATURE,
   HealthDataType.WATER_TEMPERATURE,
   HealthDataType.UNDERWATER_DEPTH,
   HealthDataType.UV_INDEX,
@@ -378,6 +380,7 @@ const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
 
   HealthDataType.NUTRITION: HealthDataUnit.NO_UNIT,
   HealthDataType.MENSTRUATION_FLOW: HealthDataUnit.NO_UNIT,
+  HealthDataType.BASAL_BODY_TEMPERATURE: HealthDataUnit.DEGREE_CELSIUS,
   HealthDataType.WATER_TEMPERATURE: HealthDataUnit.DEGREE_CELSIUS,
   HealthDataType.UNDERWATER_DEPTH: HealthDataUnit.METER,
   HealthDataType.UV_INDEX: HealthDataUnit.COUNT,

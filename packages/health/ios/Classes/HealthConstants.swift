@@ -154,6 +154,7 @@ enum HealthConstants {
     static let GENDER = "GENDER"
     static let BLOOD_TYPE = "BLOOD_TYPE"
     static let MENSTRUATION_FLOW = "MENSTRUATION_FLOW"
+    static let BASAL_BODY_TEMPERATURE = "BASAL_BODY_TEMPERATURE"
     static let WATER_TEMPERATURE = "WATER_TEMPERATURE"
     static let UNDERWATER_DEPTH = "UNDERWATER_DEPTH"
     static let UV_INDEX = "UV_INDEX"
