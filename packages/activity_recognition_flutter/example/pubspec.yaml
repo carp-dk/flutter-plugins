@@ -1,5 +1,5 @@
 name: activity_recognition_flutter_example
-version: 4.1.0
+version: 6.0.0
 description: Demonstrates how to use the activity_recognition_flutter plugin.
 
 # The following line prevents the package from being accidentally published to
@@ -7,7 +7,8 @@ description: Demonstrates how to use the activity_recognition_flutter plugin.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ^3.9.2
+
 
 dependencies:
   flutter:
@@ -23,12 +24,13 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  permission_handler: ^7.0.0
+  permission_handler: ^12.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true

@@ -26,11 +26,9 @@ class ActivityRecognition {
   /// updates to be streamed while the app runs in the background.
   /// The programmer can choose to not enable to foreground service.
   Stream<ActivityEvent> activityStream({bool runForegroundService = true}) {
-    if (_stream == null) {
-      _stream = _eventChannel
+    _stream ??= _eventChannel
           .receiveBroadcastStream({"foreground": runForegroundService}).map(
               (json) => ActivityEvent.fromString(json));
-    }
     return _stream!;
   }
 }
