@@ -73,9 +73,6 @@ class ForegroundService : Service() {
             }
             notificationManager.createNotificationChannel(channel)
         } else {
-            // Best-effort: update mutable fields (e.g., description). Importance cannot
-            // be changed after creation; calling createNotificationChannel again will
-            // no-op. Avoid deleting/recreating to comply with Android 14+ restrictions.
             if (existingChannel.importance != importance) {
                 Log.w(
                     "activity_recognition_flutter",
@@ -86,10 +83,8 @@ class ForegroundService : Service() {
             notificationManager.createNotificationChannel(existingChannel)
         }
 
-        // Ensure we have a valid icon resource, fallback to default Android star icon
         val iconResource = if (icon != 0) icon else android.R.drawable.star_on
 
-        // Make notification
         val notification = Notification.Builder(context, CHANNEL_ID)
             .setContentTitle(title)
             .setContentText(text)
