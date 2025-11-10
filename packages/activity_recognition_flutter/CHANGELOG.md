@@ -1,3 +1,10 @@
+## 6.0.0
+
+- Update AGP
+- Updated flutter version
+- Updated example app
+- Implemented use of Pigeon (see CONTRIBUTING.md)
+
 ## 5.0.0
 
 - upgraded Android SDK level

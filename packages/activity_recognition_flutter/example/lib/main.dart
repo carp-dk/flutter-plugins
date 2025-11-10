@@ -5,16 +5,18 @@ import 'package:activity_recognition_flutter/activity_recognition_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-void main() => runApp(new ActivityRecognitionApp());
+void main() => runApp(ActivityRecognitionApp());
 
 class ActivityRecognitionApp extends StatefulWidget {
+  const ActivityRecognitionApp({super.key});
+
   @override
   _ActivityRecognitionAppState createState() => _ActivityRecognitionAppState();
 }
 
 class _ActivityRecognitionAppState extends State<ActivityRecognitionApp> {
   StreamSubscription<ActivityEvent>? activityStreamSubscription;
-  List<ActivityEvent> _events = [];
+  final List<ActivityEvent> _events = [];
   ActivityRecognition activityRecognition = ActivityRecognition();
 
   @override
@@ -93,19 +95,19 @@ class _ActivityRecognitionAppState extends State<ActivityRecognitionApp> {
 
   Icon _activityIcon(ActivityType type) {
     switch (type) {
-      case ActivityType.WALKING:
+      case ActivityType.walking:
         return Icon(Icons.directions_walk);
-      case ActivityType.IN_VEHICLE:
+      case ActivityType.inVehicle:
         return Icon(Icons.car_rental);
-      case ActivityType.ON_BICYCLE:
+      case ActivityType.onBicycle:
         return Icon(Icons.pedal_bike);
-      case ActivityType.ON_FOOT:
+      case ActivityType.onFoot:
         return Icon(Icons.directions_walk);
-      case ActivityType.RUNNING:
+      case ActivityType.running:
         return Icon(Icons.run_circle);
-      case ActivityType.STILL:
+      case ActivityType.still:
         return Icon(Icons.cancel_outlined);
-      case ActivityType.TILTING:
+      case ActivityType.tilting:
         return Icon(Icons.redo);
       default:
         return Icon(Icons.device_unknown);

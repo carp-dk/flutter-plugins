@@ -3,50 +3,55 @@ import UIKit
 import CoreMotion
 
 /// A Flutter plugin for activity recognition on iOS using CoreMotion
-@objc public class ActivityRecognitionFlutterPlugin: NSObject, FlutterPlugin {
+@objc public class ActivityRecognitionFlutterPlugin: NSObject, FlutterPlugin, ActivityRecognitionHostApi {
+    
+    private let activityManager = CMMotionActivityManager()
+    private let operationQueue = OperationQueue()
+    private var flutterApi: ActivityRecognitionFlutterApi?
+    private var isTracking = false
     
     /// Registers the plugin with the Flutter engine
     /// - Parameter registrar: The plugin registrar provided by Flutter
     @objc public static func register(with registrar: FlutterPluginRegistrar) {
-        let handler = ActivityStreamHandler()
-        let channel = FlutterEventChannel(
-            name: "activity_recognition_flutter",
-            binaryMessenger: registrar.messenger()
-        )
-        channel.setStreamHandler(handler)
+        let messenger = registrar.messenger()
+        let instance = ActivityRecognitionFlutterPlugin(messenger: messenger)
+        
+        // Set up the HostApi (Flutter calls native)
+        ActivityRecognitionHostApiSetup.setUp(binaryMessenger: messenger, api: instance)
     }
-}
-
-/// Handles the stream of activity recognition events
-public class ActivityStreamHandler: NSObject, FlutterStreamHandler {
     
-    private let activityManager = CMMotionActivityManager()
-    private let operationQueue = OperationQueue()
-    
-    public override init() {
+    init(messenger: FlutterBinaryMessenger) {
         super.init()
+        
         // Configure operation queue
         operationQueue.name = "activity_recognition_flutter.queue"
         operationQueue.qualityOfService = .userInitiated
+        
+        // Set up the FlutterApi (native calls Flutter)
+        flutterApi = ActivityRecognitionFlutterApi(binaryMessenger: messenger)
     }
     
-    /// Called when Flutter starts listening to the event stream
-    /// - Parameters:
-    ///   - arguments: Optional arguments from Flutter
-    ///   - eventSink: The event sink to send activity updates to
-    /// - Returns: FlutterError if there's an error, nil otherwise
-    public func onListen(
-        withArguments arguments: Any?,
-        eventSink events: @escaping FlutterEventSink
-    ) -> FlutterError? {
+    // MARK: - ActivityRecognitionHostApi Implementation
+    
+    /// Starts activity recognition with the given configuration
+    /// - Parameter config: Configuration for activity recognition
+    /// - Throws: PigeonError if activity recognition is not available
+    func startActivityUpdates(config: ActivityRecognitionConfig) throws {
         // Check if activity recognition is available
         guard CMMotionActivityManager.isActivityAvailable() else {
-            return FlutterError(
+            throw PigeonError(
                 code: "UNAVAILABLE",
                 message: "Activity recognition is not available on this device",
                 details: nil
             )
         }
+        
+        // Don't start if already tracking
+        guard !isTracking else {
+            return
+        }
+        
+        // Note: runForegroundService is Android-only and ignored on iOS
         
         // Start activity updates
         activityManager.startActivityUpdates(to: operationQueue) { [weak self] activity in
@@ -54,51 +59,65 @@ public class ActivityStreamHandler: NSObject, FlutterStreamHandler {
             
             let activityType = self.extractActivityType(from: activity)
             let confidence = self.extractConfidence(from: activity)
-            let data = "\(activityType),\(confidence)"
+            let timestamp = Int64(Date().timeIntervalSince1970 * 1000) // milliseconds
             
-            // Send event to Flutter on the main thread
-            DispatchQueue.main.async {
-                events(data)
+            let eventData = ActivityEventData(
+                type: activityType,
+                confidence: confidence,
+                timestamp: timestamp
+            )
+            
+            // Send event to Flutter via Pigeon
+            self.flutterApi?.onActivityUpdate(event: eventData) { result in
+                if case .failure(let error) = result {
+                    print("Error sending activity update to Flutter: \(error)")
+                }
             }
         }
         
-        return nil
+        isTracking = true
     }
     
-    /// Called when Flutter stops listening to the event stream
-    /// - Parameter arguments: Optional arguments from Flutter
-    /// - Returns: FlutterError if there's an error, nil otherwise
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    /// Stops activity recognition
+    /// - Throws: PigeonError if there's an error stopping
+    func stopActivityUpdates() throws {
         activityManager.stopActivityUpdates()
-        return nil
+        isTracking = false
+    }
+    
+    /// Checks if activity recognition is available on the device
+    /// - Returns: true if available, false otherwise
+    /// - Throws: Never throws, just returns the availability status
+    func isActivityRecognitionAvailable() throws -> Bool {
+        return CMMotionActivityManager.isActivityAvailable()
     }
     
     // MARK: - Private Helper Methods
     
     /// Extracts the activity type from a CMMotionActivity
     /// - Parameter activity: The motion activity to extract from
-    /// - Returns: A string representation of the activity type
-    private func extractActivityType(from activity: CMMotionActivity) -> String {
+    /// - Returns: The ActivityTypeData enum value
+    private func extractActivityType(from activity: CMMotionActivity) -> ActivityTypeData {
         // Check activities in order of priority
         if activity.stationary {
-            return "STILL"
+            return .still
         } else if activity.walking {
-            return "WALKING"
+            return .walking
         } else if activity.running {
-            return "RUNNING"
+            return .running
         } else if activity.automotive {
-            return "IN_VEHICLE"
+            return .inVehicle
         } else if activity.cycling {
-            return "ON_BICYCLE"
+            return .onBicycle
         } else {
-            return "UNKNOWN"
+            return .unknown
         }
     }
     
     /// Extracts the confidence level from a CMMotionActivity
     /// - Parameter activity: The motion activity to extract from
     /// - Returns: An integer representing the confidence level (10, 50, or 100)
-    private func extractConfidence(from activity: CMMotionActivity) -> Int {
+    private func extractConfidence(from activity: CMMotionActivity) -> Int64 {
         switch activity.confidence {
         case .low:
             return 10

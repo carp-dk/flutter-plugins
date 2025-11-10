@@ -1,6 +1,6 @@
 name: activity_recognition_flutter
 description: Activity recognition plugin for Android and iOS. Provides event-based information about activities detected by the phone.
-version: 5.0.0
+version: 6.0.0
 homepage: https://github.com/cph-cachet/flutter-plugins/tree/master/packages
 
 environment:
@@ -15,6 +15,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  pigeon: ^26.0.0
 
 flutter:
   plugin:
