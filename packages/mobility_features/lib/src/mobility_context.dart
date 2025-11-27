@@ -120,11 +120,13 @@ class MobilityContext {
     if (_stops!.length < 2) return 0.0;
 
     double latStd = Stats.fromData(_stops!.map((s) => (s.geoLocation.latitude)))
-        .standardDeviation as double;
+        .sampleValues
+        .standardDeviation;
 
     double lonStd =
         Stats.fromData(_stops!.map((s) => (s.geoLocation.longitude)))
-            .standardDeviation as double;
+            .sampleValues
+            .standardDeviation;
     return log(latStd * latStd + lonStd * lonStd + 1);
   }
 
