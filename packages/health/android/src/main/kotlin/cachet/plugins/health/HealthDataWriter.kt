@@ -745,6 +745,27 @@ class HealthDataWriter(
                             zoneOffset = null,
                             metadata = metadata,
                     )
+            BASAL_BODY_TEMPERATURE ->
+                    BasalBodyTemperatureRecord(
+                            time = Instant.ofEpochMilli(startTime),
+                            temperature = Temperature.celsius(value),
+                            zoneOffset = null,
+                            metadata = metadata,
+                    )
+            CERVICAL_MUCUS_QUALITY ->
+                    CervicalMucusRecord(
+                            time = Instant.ofEpochMilli(startTime),
+                            texture = value.toInt(),
+                            zoneOffset = null,
+                            metadata = metadata,
+                    )
+            OVULATION_TEST_RESULT ->
+                    OvulationTestRecord(
+                            time = Instant.ofEpochMilli(startTime),
+                            result = value.toInt(),
+                            zoneOffset = null,
+                            metadata = metadata,
+                    )
             SPEED ->
                     SpeedRecord(
                             startTime = Instant.ofEpochMilli(startTime),
