@@ -1,6 +1,6 @@
 # Health
 
-<!-- ryanTempdrop: Last updated Sun Nov 30 14:05:54 IST 2025 - iOS & Android support for BASAL_BODY_TEMPERATURE, CERVICAL_MUCUS_QUALITY, OVULATION_TEST_RESULT (iOS only: PREGNANCY_TEST_RESULTS) -->
+<!-- ryanTempdrop: Last updated Sun Nov 30 14:20:27 IST 2025 - COMPLETE iOS & Android implementation for BASAL_BODY_TEMPERATURE, CERVICAL_MUCUS_QUALITY, OVULATION_TEST_RESULT (iOS only: PREGNANCY_TEST_RESULTS) - Full read/write support -->
 
 Enables reading and writing health data from/to [Apple Health](https://www.apple.com/health/) and [Google Health Connect](https://health.google/health-connect-android/).
 
