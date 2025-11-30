@@ -6,7 +6,6 @@ import androidx.health.connect.client.records.*
 import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
 import androidx.health.connect.client.units.*
-import cachet.plugins.health.HealthConstants.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel.Result
 import java.time.Instant
@@ -561,35 +560,35 @@ class HealthDataWriter(
                 metadata: Metadata
         ): Record? {
                 return when (type) {
-                        BODY_FAT_PERCENTAGE ->
+                        HealthConstants.BODY_FAT_PERCENTAGE ->
                                 BodyFatRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         percentage = Percentage(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        LEAN_BODY_MASS ->
+                        HealthConstants.LEAN_BODY_MASS ->
                                 LeanBodyMassRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         mass = Mass.kilograms(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        HEIGHT ->
+                        HealthConstants.HEIGHT ->
                                 HeightRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         height = Length.meters(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        WEIGHT ->
+                        HealthConstants.WEIGHT ->
                                 WeightRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         weight = Mass.kilograms(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        STEPS ->
+                        HealthConstants.STEPS ->
                                 StepsRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -598,7 +597,7 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        ACTIVE_ENERGY_BURNED ->
+                        HealthConstants.ACTIVE_ENERGY_BURNED ->
                                 ActiveCaloriesBurnedRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -607,7 +606,7 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        HEART_RATE ->
+                        HealthConstants.HEART_RATE ->
                                 HeartRateRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -625,42 +624,42 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BODY_TEMPERATURE ->
+                        HealthConstants.BODY_TEMPERATURE ->
                                 BodyTemperatureRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         temperature = Temperature.celsius(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BODY_WATER_MASS ->
+                        HealthConstants.BODY_WATER_MASS ->
                                 BodyWaterMassRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         mass = Mass.kilograms(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BLOOD_OXYGEN ->
+                        HealthConstants.BLOOD_OXYGEN ->
                                 OxygenSaturationRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         percentage = Percentage(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BLOOD_GLUCOSE ->
+                        HealthConstants.BLOOD_GLUCOSE ->
                                 BloodGlucoseRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         level = BloodGlucose.milligramsPerDeciliter(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        HEART_RATE_VARIABILITY_RMSSD ->
+                        HealthConstants.HEART_RATE_VARIABILITY_RMSSD ->
                                 HeartRateVariabilityRmssdRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         heartRateVariabilityMillis = value,
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        DISTANCE_DELTA ->
+                        HealthConstants.DISTANCE_DELTA ->
                                 DistanceRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -669,7 +668,7 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        WATER ->
+                        HealthConstants.WATER ->
                                 HydrationRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -678,63 +677,63 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        SLEEP_ASLEEP ->
+                        HealthConstants.SLEEP_ASLEEP ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_SLEEPING,
                                         metadata
                                 )
-                        SLEEP_LIGHT ->
+                        HealthConstants.SLEEP_LIGHT ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_LIGHT,
                                         metadata
                                 )
-                        SLEEP_DEEP ->
+                        HealthConstants.SLEEP_DEEP ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_DEEP,
                                         metadata
                                 )
-                        SLEEP_REM ->
+                        HealthConstants.SLEEP_REM ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_REM,
                                         metadata
                                 )
-                        SLEEP_OUT_OF_BED ->
+                        HealthConstants.SLEEP_OUT_OF_BED ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_OUT_OF_BED,
                                         metadata
                                 )
-                        SLEEP_AWAKE ->
+                        HealthConstants.SLEEP_AWAKE ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_AWAKE,
                                         metadata
                                 )
-                        SLEEP_AWAKE_IN_BED ->
+                        HealthConstants.SLEEP_AWAKE_IN_BED ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_AWAKE_IN_BED,
                                         metadata
                                 )
-                        SLEEP_UNKNOWN ->
+                        HealthConstants.SLEEP_UNKNOWN ->
                                 createSleepRecord(
                                         startTime,
                                         endTime,
                                         SleepSessionRecord.STAGE_TYPE_UNKNOWN,
                                         metadata
                                 )
-                        SLEEP_SESSION ->
+                        HealthConstants.SLEEP_SESSION ->
                                 SleepSessionRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -742,21 +741,21 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        RESTING_HEART_RATE ->
+                        HealthConstants.RESTING_HEART_RATE ->
                                 RestingHeartRateRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         beatsPerMinute = value.toLong(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BASAL_ENERGY_BURNED ->
+                        HealthConstants.BASAL_ENERGY_BURNED ->
                                 BasalMetabolicRateRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         basalMetabolicRate = Power.kilocaloriesPerDay(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        FLIGHTS_CLIMBED ->
+                        HealthConstants.FLIGHTS_CLIMBED ->
                                 FloorsClimbedRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -765,14 +764,14 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        RESPIRATORY_RATE ->
+                        HealthConstants.RESPIRATORY_RATE ->
                                 RespiratoryRateRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         rate = value,
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        TOTAL_CALORIES_BURNED ->
+                        HealthConstants.TOTAL_CALORIES_BURNED ->
                                 TotalCaloriesBurnedRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -781,35 +780,35 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        MENSTRUATION_FLOW ->
+                        HealthConstants.MENSTRUATION_FLOW ->
                                 MenstruationFlowRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         flow = value.toInt(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BASAL_BODY_TEMPERATURE ->
+                        HealthConstants.BASAL_BODY_TEMPERATURE ->
                                 BasalBodyTemperatureRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         temperature = Temperature.celsius(value),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        CERVICAL_MUCUS_QUALITY ->
+                        HealthConstants.CERVICAL_MUCUS_QUALITY ->
                                 CervicalMucusRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         appearance = value.toInt(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        OVULATION_TEST_RESULT ->
+                        HealthConstants.OVULATION_TEST_RESULT ->
                                 OvulationTestRecord(
                                         time = Instant.ofEpochMilli(startTime),
                                         result = value.toInt(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
-                        SPEED ->
+                        HealthConstants.SPEED ->
                                 SpeedRecord(
                                         startTime = Instant.ofEpochMilli(startTime),
                                         endTime = Instant.ofEpochMilli(endTime),
@@ -830,14 +829,14 @@ class HealthDataWriter(
                                         endZoneOffset = null,
                                         metadata = metadata,
                                 )
-                        BLOOD_PRESSURE_SYSTOLIC -> {
+                        HealthConstants.BLOOD_PRESSURE_SYSTOLIC -> {
                                 Log.e(
                                         "FLUTTER_HEALTH::ERROR",
                                         "You must use the [writeBloodPressure] API"
                                 )
                                 null
                         }
-                        BLOOD_PRESSURE_DIASTOLIC -> {
+                        HealthConstants.BLOOD_PRESSURE_DIASTOLIC -> {
                                 Log.e(
                                         "FLUTTER_HEALTH::ERROR",
                                         "You must use the [writeBloodPressure] API"

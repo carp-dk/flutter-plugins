@@ -2,7 +2,6 @@ package cachet.plugins.health
 
 import androidx.health.connect.client.records.*
 import androidx.health.connect.client.records.metadata.Metadata
-import cachet.plugins.health.HealthConstants.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
