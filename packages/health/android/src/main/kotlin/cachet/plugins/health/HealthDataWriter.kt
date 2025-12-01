@@ -797,14 +797,15 @@ class HealthDataWriter(
                         HealthConstants.CERVICAL_MUCUS_QUALITY ->
                                 CervicalMucusRecord(
                                         time = Instant.ofEpochMilli(startTime),
-                                        appearance = value.toInt(),
                                         zoneOffset = null,
                                         metadata = metadata,
+                                        appearance = value.toCervicalMucusAppearance(),
+                                        sensation = CervicalMucusRecord.SENSATION_UNKNOWN,
                                 )
                         HealthConstants.OVULATION_TEST_RESULT ->
                                 OvulationTestRecord(
                                         time = Instant.ofEpochMilli(startTime),
-                                        result = value.toInt(),
+                                        result = value.toOvulationTestResult(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
@@ -895,6 +896,39 @@ class HealthDataWriter(
                                 ),
                         metadata = metadata,
                 )
+        }
+
+        /**
+         * Normalizes cervical mucus appearance values so we never send an unsupported enum to
+         * Health Connect. Unknown or out-of-range inputs fall back to APPEARANCE_UNKNOWN.
+         */
+        private fun Double.toCervicalMucusAppearance(): Int {
+                val appearanceValue = this.toInt()
+                return when (appearanceValue) {
+                        CervicalMucusRecord.APPEARANCE_UNKNOWN,
+                        CervicalMucusRecord.APPEARANCE_DRY,
+                        CervicalMucusRecord.APPEARANCE_STICKY,
+                        CervicalMucusRecord.APPEARANCE_CREAMY,
+                        CervicalMucusRecord.APPEARANCE_WATERY,
+                        CervicalMucusRecord.APPEARANCE_EGG_WHITE,
+                        CervicalMucusRecord.APPEARANCE_UNUSUAL -> appearanceValue
+                        else -> CervicalMucusRecord.APPEARANCE_UNKNOWN
+                }
+        }
+
+        /**
+         * Normalizes ovulation test results to the current SDK enum range. Defaults to
+         * RESULT_INCONCLUSIVE when the provided value is invalid.
+         */
+        private fun Double.toOvulationTestResult(): Int {
+                val resultValue = this.toInt()
+                return when (resultValue) {
+                        OvulationTestRecord.RESULT_INCONCLUSIVE,
+                        OvulationTestRecord.RESULT_POSITIVE,
+                        OvulationTestRecord.RESULT_HIGH,
+                        OvulationTestRecord.RESULT_NEGATIVE -> resultValue
+                        else -> OvulationTestRecord.RESULT_INCONCLUSIVE
+                }
         }
 
         companion object {
