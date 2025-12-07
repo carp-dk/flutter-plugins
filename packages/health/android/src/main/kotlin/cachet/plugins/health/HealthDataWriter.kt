@@ -328,8 +328,8 @@ class HealthDataWriter(
 
         /**
          * Writes cervical mucus data with both sensation and appearance values. Creates a
-         * CervicalMucusRecord containing both sensation (texture) and appearance characteristics
-         * of cervical mucus.
+         * CervicalMucusRecord containing both sensation (texture) and appearance characteristics of
+         * cervical mucus.
          *
          * @param call Method call containing 'sensation', 'appearance', 'startTime',
          * 'recordingMethod'
@@ -359,8 +359,16 @@ class HealthDataWriter(
                                                         time = startTime,
                                                         zoneOffset = null,
                                                         metadata = metadata,
-                                                        sensation = sensation?.toCervicalMucusSensation() ?: CervicalMucusRecord.SENSATION_UNKNOWN,
-                                                        appearance = appearance?.toCervicalMucusAppearance() ?: CervicalMucusRecord.APPEARANCE_UNKNOWN,
+                                                        sensation =
+                                                                sensation
+                                                                        ?.toCervicalMucusSensation()
+                                                                        ?: CervicalMucusRecord
+                                                                                .SENSATION_UNKNOWN,
+                                                        appearance =
+                                                                appearance
+                                                                        ?.toCervicalMucusAppearance()
+                                                                        ?: CervicalMucusRecord
+                                                                                .APPEARANCE_UNKNOWN,
                                                 ),
                                         ),
                                 )
@@ -954,15 +962,12 @@ class HealthDataWriter(
         }
 
         /**
-         * Converts numeric sensation values to cervical mucus sensation constants.
-         * Maps intuitive sensation scales (light, medium, heavy) to Health Connect API values.
-         * Normalizes out-of-range inputs to SENSATION_UNKNOWN.
+         * Converts numeric sensation values to cervical mucus sensation constants. Maps intuitive
+         * sensation scales (light, medium, heavy) to Health Connect API values. Normalizes
+         * out-of-range inputs to SENSATION_UNKNOWN.
          *
-         * Mapping:
-         *   1.0 (Dry) → SENSATION_LIGHT
-         *   2.0 (Moist) → SENSATION_MEDIUM
-         *   3.0 (Wet) → SENSATION_HEAVY
-         *   other → SENSATION_UNKNOWN
+         * Mapping: 1.0 (Dry) → SENSATION_LIGHT 2.0 (Moist) → SENSATION_MEDIUM 3.0 (Wet) →
+         * SENSATION_HEAVY other → SENSATION_UNKNOWN
          */
         private fun Double.toCervicalMucusSensation(): Int {
                 return when (this.toInt()) {
@@ -978,12 +983,8 @@ class HealthDataWriter(
          * Normalizes cervical mucus appearance values so we never send an unsupported enum to
          * Health Connect. Unknown or out-of-range inputs fall back to APPEARANCE_UNKNOWN.
          *
-         * Mapping:
-         *   0 (None) → APPEARANCE_UNKNOWN
-         *   1 (Sticky) → APPEARANCE_STICKY
-         *   2 (Creamy) → APPEARANCE_CREAMY
-         *   3 (Egg white) → APPEARANCE_EGG_WHITE
-         *   other → APPEARANCE_UNKNOWN
+         * Mapping: 0 (None) → APPEARANCE_UNKNOWN 1 (Sticky) → APPEARANCE_STICKY 2 (Creamy) →
+         * APPEARANCE_CREAMY 3 (Egg white) → APPEARANCE_EGG_WHITE other → APPEARANCE_UNKNOWN
          */
         private fun Double.toCervicalMucusAppearance(): Int {
                 val appearanceValue = this.toInt()
