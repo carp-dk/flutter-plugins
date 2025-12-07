@@ -327,6 +327,61 @@ class HealthDataWriter(
         }
 
         /**
+         * Writes cervical mucus data with both sensation and appearance values. Creates a
+         * CervicalMucusRecord containing both sensation (texture) and appearance characteristics
+         * of cervical mucus.
+         *
+         * @param call Method call containing 'sensation', 'appearance', 'startTime',
+         * 'recordingMethod'
+         * @param result Flutter result callback returning boolean success status
+         */
+        fun writeCervicalMucusData(call: MethodCall, result: Result) {
+                val sensation = call.argument<Double>("sensation")
+                val appearance = call.argument<Double>("appearance")
+                val startTime = Instant.ofEpochMilli(call.argument<Long>("startTime")!!)
+                val recordingMethod = call.argument<Int>("recordingMethod")!!
+                val clientRecordId: String? = call.argument<String>("clientRecordId")
+                val clientRecordVersion: Double? = call.argument<Double>("clientRecordVersion")
+                val deviceType: Int? = call.argument<Int>("deviceType")
+
+                scope.launch {
+                        try {
+                                val metadata: Metadata =
+                                        buildMetadata(
+                                                recordingMethod = recordingMethod,
+                                                clientRecordId = clientRecordId,
+                                                clientRecordVersion = clientRecordVersion?.toLong(),
+                                                deviceType = deviceType,
+                                        )
+                                healthConnectClient.insertRecords(
+                                        listOf(
+                                                CervicalMucusRecord(
+                                                        time = startTime,
+                                                        zoneOffset = null,
+                                                        metadata = metadata,
+                                                        sensation = sensation?.toCervicalMucusSensation() ?: CervicalMucusRecord.SENSATION_UNKNOWN,
+                                                        appearance = appearance?.toCervicalMucusAppearance() ?: CervicalMucusRecord.APPEARANCE_UNKNOWN,
+                                                ),
+                                        ),
+                                )
+                                result.success(true)
+                                Log.i(
+                                        "FLUTTER_HEALTH::SUCCESS",
+                                        "[Health Connect] Cervical mucus data was successfully added!",
+                                )
+                        } catch (e: Exception) {
+                                Log.w(
+                                        "FLUTTER_HEALTH::ERROR",
+                                        "[Health Connect] There was an error adding the cervical mucus data",
+                                )
+                                Log.w("FLUTTER_HEALTH::ERROR", e.message ?: "unknown error")
+                                Log.w("FLUTTER_HEALTH::ERROR", e.stackTrace.toString())
+                                result.success(false)
+                        }
+                }
+        }
+
+        /**
          * Writes comprehensive nutrition/meal data with detailed nutrient breakdown. Creates
          * NutritionRecord with extensive nutrient information including vitamins, minerals,
          * macronutrients, and meal classification.
@@ -797,14 +852,15 @@ class HealthDataWriter(
                         HealthConstants.CERVICAL_MUCUS_QUALITY ->
                                 CervicalMucusRecord(
                                         time = Instant.ofEpochMilli(startTime),
-                                        appearance = value.toInt(),
                                         zoneOffset = null,
                                         metadata = metadata,
+                                        appearance = value.toCervicalMucusAppearance(),
+                                        sensation = value.toCervicalMucusSensation(),
                                 )
                         HealthConstants.OVULATION_TEST_RESULT ->
                                 OvulationTestRecord(
                                         time = Instant.ofEpochMilli(startTime),
-                                        result = value.toInt(),
+                                        result = value.toOvulationTestResult(),
                                         zoneOffset = null,
                                         metadata = metadata,
                                 )
@@ -895,6 +951,66 @@ class HealthDataWriter(
                                 ),
                         metadata = metadata,
                 )
+        }
+
+        /**
+         * Converts numeric sensation values to cervical mucus sensation constants.
+         * Maps intuitive sensation scales (light, medium, heavy) to Health Connect API values.
+         * Normalizes out-of-range inputs to SENSATION_UNKNOWN.
+         *
+         * Mapping:
+         *   1.0 (Dry) → SENSATION_LIGHT
+         *   2.0 (Moist) → SENSATION_MEDIUM
+         *   3.0 (Wet) → SENSATION_HEAVY
+         *   other → SENSATION_UNKNOWN
+         */
+        private fun Double.toCervicalMucusSensation(): Int {
+                return when (this.toInt()) {
+                        CervicalMucusRecord.SENSATION_LIGHT,
+                        CervicalMucusRecord.SENSATION_MEDIUM,
+                        CervicalMucusRecord.SENSATION_HEAVY,
+                        CervicalMucusRecord.SENSATION_UNKNOWN -> this.toInt()
+                        else -> CervicalMucusRecord.SENSATION_UNKNOWN
+                }
+        }
+
+        /**
+         * Normalizes cervical mucus appearance values so we never send an unsupported enum to
+         * Health Connect. Unknown or out-of-range inputs fall back to APPEARANCE_UNKNOWN.
+         *
+         * Mapping:
+         *   0 (None) → APPEARANCE_UNKNOWN
+         *   1 (Sticky) → APPEARANCE_STICKY
+         *   2 (Creamy) → APPEARANCE_CREAMY
+         *   3 (Egg white) → APPEARANCE_EGG_WHITE
+         *   other → APPEARANCE_UNKNOWN
+         */
+        private fun Double.toCervicalMucusAppearance(): Int {
+                val appearanceValue = this.toInt()
+                return when (appearanceValue) {
+                        CervicalMucusRecord.APPEARANCE_UNKNOWN,
+                        CervicalMucusRecord.APPEARANCE_STICKY,
+                        CervicalMucusRecord.APPEARANCE_CREAMY,
+                        CervicalMucusRecord.APPEARANCE_EGG_WHITE,
+                        CervicalMucusRecord.APPEARANCE_WATERY,
+                        CervicalMucusRecord.APPEARANCE_UNUSUAL -> appearanceValue
+                        else -> CervicalMucusRecord.APPEARANCE_UNKNOWN
+                }
+        }
+
+        /**
+         * Normalizes ovulation test results to the current SDK enum range. Defaults to
+         * RESULT_INCONCLUSIVE when the provided value is invalid.
+         */
+        private fun Double.toOvulationTestResult(): Int {
+                val resultValue = this.toInt()
+                return when (resultValue) {
+                        OvulationTestRecord.RESULT_INCONCLUSIVE,
+                        OvulationTestRecord.RESULT_POSITIVE,
+                        OvulationTestRecord.RESULT_HIGH,
+                        OvulationTestRecord.RESULT_NEGATIVE -> resultValue
+                        else -> OvulationTestRecord.RESULT_INCONCLUSIVE
+                }
         }
 
         companion object {
