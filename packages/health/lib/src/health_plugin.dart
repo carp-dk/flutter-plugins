@@ -982,6 +982,47 @@ class Health {
     return await _channel.invokeMethod('writeMenstruationFlow', args) == true;
   }
 
+  /// Saves cervical mucus data into Apple Health or Google Health Connect.
+  ///
+  /// Returns true if successful, false otherwise.
+  ///
+  /// Parameters:
+  ///  * [appearance] - the cervical mucus appearance (required).
+  ///  * [sensation] - the cervical mucus sensation (Android only, optional).
+  ///    On iOS, this parameter is ignored as HealthKit only supports appearance.
+  ///  * [startTime] - the time when the cervical mucus was observed.
+  ///  * [recordingMethod] - the recording method of the data point.
+  Future<bool> writeCervicalMucus({
+    required CervicalMucusAppearance appearance,
+    CervicalMucusSensation? sensation,
+    required DateTime startTime,
+    RecordingMethod recordingMethod = RecordingMethod.automatic,
+  }) async {
+    await _checkIfHealthConnectAvailableOnAndroid();
+    if (Platform.isIOS &&
+        [
+          RecordingMethod.active,
+          RecordingMethod.unknown,
+        ].contains(recordingMethod)) {
+      throw ArgumentError("recordingMethod must be manual or automatic on iOS");
+    }
+
+    Map<String, dynamic> args = {
+      'appearance': Platform.isAndroid
+          ? appearance.toHealthConnect().toDouble()
+          : appearance.toHealthKit().toDouble(),
+      'startTime': startTime.millisecondsSinceEpoch,
+      'recordingMethod': recordingMethod.toInt(),
+    };
+
+    // Sensation is only supported on Android Health Connect
+    if (Platform.isAndroid && sensation != null) {
+      args['sensation'] = sensation.toHealthConnect().toDouble();
+    }
+
+    return await _channel.invokeMethod('writeCervicalMucus', args) == true;
+  }
+
   /// Saves audiogram into Apple Health. Not supported on Android.
   ///
   /// Returns true if successful, false otherwise.

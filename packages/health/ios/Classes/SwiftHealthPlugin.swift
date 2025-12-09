@@ -149,6 +149,15 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
                                     details: nil))
             }
             
+        case "writeCervicalMucus":
+            do {
+                try healthDataWriter.writeCervicalMucus(call: call, result: result)
+            } catch {
+                result(FlutterError(code: "WRITE_ERROR",
+                                    message: "Error writing menstruation flow: \(error.localizedDescription)",
+                                    details: nil))
+            }
+            
         case "hasPermissions":
             do {
                 try healthDataOperations.hasPermissions(call: call, result: result)

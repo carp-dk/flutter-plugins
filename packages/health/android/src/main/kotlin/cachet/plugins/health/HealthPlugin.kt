@@ -162,6 +162,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             "writeBloodPressure" -> dataWriter.writeBloodPressure(call, result)
             "writeBloodOxygen" -> dataWriter.writeBloodOxygen(call, result)
             "writeMenstruationFlow" -> dataWriter.writeMenstruationFlow(call, result)
+            "writeCervicalMucus" -> dataWriter.writeCervicalMucusData(call, result)
             "writeMeal" -> dataWriter.writeMeal(call, result)
             // TODO: Add support for multiple speed for iOS as well
             // "writeMultipleSpeed" -> dataWriter.writeMultipleSpeedData(call, result)

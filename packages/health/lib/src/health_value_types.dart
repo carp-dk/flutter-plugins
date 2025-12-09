@@ -859,6 +859,103 @@ enum MenstrualFlow {
   }
 }
 
+/// Cervical mucus appearance values.
+///
+/// Maps to Health Connect CervicalMucusRecord.APPEARANCE_* constants
+/// and iOS HKCategoryValueCervicalMucusQuality.
+enum CervicalMucusAppearance {
+  unknown,
+  dry,
+  sticky,
+  creamy,
+  watery,
+  eggWhite,
+  unusual;
+
+  /// Convert to Health Connect API value.
+  ///
+  /// Health Connect constants:
+  /// 0 = APPEARANCE_UNKNOWN
+  /// 1 = APPEARANCE_DRY
+  /// 2 = APPEARANCE_STICKY
+  /// 3 = APPEARANCE_CREAMY
+  /// 4 = APPEARANCE_WATERY
+  /// 5 = APPEARANCE_EGG_WHITE
+  /// 6 = APPEARANCE_UNUSUAL
+  int toHealthConnect() {
+    switch (this) {
+      case CervicalMucusAppearance.unknown:
+        return 0;
+      case CervicalMucusAppearance.dry:
+        return 1;
+      case CervicalMucusAppearance.sticky:
+        return 2;
+      case CervicalMucusAppearance.creamy:
+        return 3;
+      case CervicalMucusAppearance.watery:
+        return 4;
+      case CervicalMucusAppearance.eggWhite:
+        return 5;
+      case CervicalMucusAppearance.unusual:
+        return 6;
+    }
+  }
+
+  /// Convert to iOS HealthKit value.
+  ///
+  /// HKCategoryValueCervicalMucusQuality:
+  /// 1 = dry, 2 = sticky, 3 = creamy, 4 = watery, 5 = eggWhite
+  int toHealthKit() {
+    switch (this) {
+      case CervicalMucusAppearance.dry:
+        return 1;
+      case CervicalMucusAppearance.sticky:
+        return 2;
+      case CervicalMucusAppearance.creamy:
+        return 3;
+      case CervicalMucusAppearance.watery:
+        return 4;
+      case CervicalMucusAppearance.eggWhite:
+        return 5;
+      case CervicalMucusAppearance.unknown:
+      case CervicalMucusAppearance.unusual:
+        // iOS doesn't have unknown or unusual, default to dry
+        return 1;
+    }
+  }
+}
+
+/// Cervical mucus sensation values (Android Health Connect only).
+///
+/// Maps to Health Connect CervicalMucusRecord.SENSATION_* constants.
+/// iOS HealthKit does not support sensation - only appearance/quality.
+enum CervicalMucusSensation {
+  unknown,
+  light,
+  medium,
+  heavy;
+
+  /// Convert to Health Connect API value.
+  ///
+  /// Health Connect constants:
+  /// 0 = SENSATION_UNKNOWN
+  /// 1 = SENSATION_LIGHT
+  /// 2 = SENSATION_MEDIUM
+  /// 3 = SENSATION_HEAVY
+  int toHealthConnect() {
+    switch (this) {
+      case CervicalMucusSensation.unknown:
+        return 0;
+      case CervicalMucusSensation.light:
+        return 1;
+      case CervicalMucusSensation.medium:
+        return 2;
+      case CervicalMucusSensation.heavy:
+        return 3;
+    }
+  }
+}
+
 enum RecordingMethod {
   unknown,
   active,
