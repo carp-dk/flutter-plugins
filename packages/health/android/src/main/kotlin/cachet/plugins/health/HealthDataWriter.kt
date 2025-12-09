@@ -863,7 +863,13 @@ class HealthDataWriter(
                                         zoneOffset = null,
                                         metadata = metadata,
                                         appearance = value.toCervicalMucusAppearance(),
-                                        sensation = value.toCervicalMucusSensation(),
+                                        // Don't derive sensation from the same value as appearance.
+                                        // When only appearance is provided via the generic
+                                        // writeData API,
+                                        // sensation should remain unknown to avoid incorrect
+                                        // combinations
+                                        // like "Sticky Medium" or "Creamy Heavy".
+                                        sensation = CervicalMucusRecord.SENSATION_UNKNOWN,
                                 )
                         HealthConstants.OVULATION_TEST_RESULT ->
                                 OvulationTestRecord(
@@ -983,13 +989,15 @@ class HealthDataWriter(
          * Normalizes cervical mucus appearance values so we never send an unsupported enum to
          * Health Connect. Unknown or out-of-range inputs fall back to APPEARANCE_UNKNOWN.
          *
-         * Mapping: 0 (None) → APPEARANCE_UNKNOWN 1 (Sticky) → APPEARANCE_STICKY 2 (Creamy) →
-         * APPEARANCE_CREAMY 3 (Egg white) → APPEARANCE_EGG_WHITE other → APPEARANCE_UNKNOWN
+         * Health Connect API appearance constants: 0 → APPEARANCE_UNKNOWN 1 → APPEARANCE_DRY 2 →
+         * APPEARANCE_STICKY 3 → APPEARANCE_CREAMY 4 → APPEARANCE_WATERY 5 → APPEARANCE_EGG_WHITE 6
+         * → APPEARANCE_UNUSUAL
          */
         private fun Double.toCervicalMucusAppearance(): Int {
                 val appearanceValue = this.toInt()
                 return when (appearanceValue) {
                         CervicalMucusRecord.APPEARANCE_UNKNOWN,
+                        CervicalMucusRecord.APPEARANCE_DRY,
                         CervicalMucusRecord.APPEARANCE_STICKY,
                         CervicalMucusRecord.APPEARANCE_CREAMY,
                         CervicalMucusRecord.APPEARANCE_EGG_WHITE,
