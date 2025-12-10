@@ -106,6 +106,7 @@ enum HealthDataType {
   CERVICAL_MUCUS_QUALITY,
   OVULATION_TEST_RESULT,
   PREGNANCY_TEST_RESULTS,
+  INTERMENSTRUAL_BLEEDING,
   WATER_TEMPERATURE,
   UNDERWATER_DEPTH,
 
@@ -224,6 +225,7 @@ const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.CERVICAL_MUCUS_QUALITY,
   HealthDataType.OVULATION_TEST_RESULT,
   HealthDataType.PREGNANCY_TEST_RESULTS,
+  HealthDataType.INTERMENSTRUAL_BLEEDING,
   HealthDataType.WATER_TEMPERATURE,
   HealthDataType.UNDERWATER_DEPTH,
   HealthDataType.UV_INDEX,
@@ -389,6 +391,7 @@ const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
   HealthDataType.CERVICAL_MUCUS_QUALITY: HealthDataUnit.NO_UNIT,
   HealthDataType.OVULATION_TEST_RESULT: HealthDataUnit.NO_UNIT,
   HealthDataType.PREGNANCY_TEST_RESULTS: HealthDataUnit.NO_UNIT,
+  HealthDataType.INTERMENSTRUAL_BLEEDING: HealthDataUnit.NO_UNIT,
   HealthDataType.WATER_TEMPERATURE: HealthDataUnit.DEGREE_CELSIUS,
   HealthDataType.UNDERWATER_DEPTH: HealthDataUnit.METER,
   HealthDataType.UV_INDEX: HealthDataUnit.COUNT,
