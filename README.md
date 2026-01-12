@@ -3,18 +3,19 @@
 This repo contains the source code for Flutter first-party plugins maintained by the [Copenhagen Research Platform (CARP)](http://www.carp.dk/) team at the Technical University of Denmark.
 Check the `packages` directory for all plugins.
 
-Flutter plugins enable access to platform-specific APIs using a platform channel. 
+Flutter plugins enable access to platform-specific APIs using a platform channel.
 For more information about plugins and how to use them, see
 [https://flutter.io/platform-plugins/](https://flutter.io/platform-plugins/).
 
 ## Plugins
+
 These are the available plugins in this repository.
 
-| Plugin | Description | Android | iOS |    pub.dev    | 
+| Plugin | Description | Android | iOS |    pub.dev    |
 |--------|-------------|:-------:|:---:|:---------:|
 | [screen_state](./packages/screen_state) | Track screen state changes | ✔️ | ✔️ | [![pub package](https://img.shields.io/pub/v/screen_state.svg)](https://pub.dartlang.org/packages/screen_state) |
 | [light](./packages/light) | Track light sensor readings | ✔️ | ❌ |  [![pub package](https://img.shields.io/pub/v/light.svg)](https://pub.dartlang.org/packages/light) |
-| [pedometer](./packages/pedometer) | Track step count |  ✔️ | ✔️ | [![pub package](https://img.shields.io/pub/v/pedometer.svg)](https://pub.dartlang.org/packages/pedometer) |
+| [pedometer](./packages/pedometer) | Collect step events |  ✔️ | ✔️ | [![pub package](https://img.shields.io/pub/v/pedometer.svg)](https://pub.dartlang.org/packages/pedometer) |
 | [noise_meter](./packages/noise_meter) | Read noise level in Decibel | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/noise_meter.svg)](https://pub.dartlang.org/packages/noise_meter) |
 | [app_usage](./packages/app_usage) | Track usage of all applications on phone. | ✔️ | ❌  | [![pub package](https://img.shields.io/pub/v/app_usage.svg)](https://pub.dartlang.org/packages/app_usage) |
 | [weather](./packages/weather) | Get current weather, as well as forecasting using the OpenWeatherMap API. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/weather.svg)](https://pub.dartlang.org/packages/weather) |
@@ -35,9 +36,7 @@ Please check existing issues and file any new issues, bugs, or feature requests 
 
 ## Contributing
 
-As part of the open-source Flutter ecosystem, we would welcome any help in maintaining and enhancing these plugins. 
+As part of the open-source Flutter ecosystem, we would welcome any help in maintaining and enhancing these plugins.
 We (i.e., the CARP team) have limited resources for maintaining these plugins, and we rely on **your** help in this.
 We welcome any contribution - from small error corrections in the documentation, to bug fixes, to large feature enhancements, or even new features in a plugin.
 If you wish to contribute to any of the plugins in this repo, please review our [contribution guide](https://github.com/cph-cachet/flutter-plugins/CONTRIBUTING.md) and send a [pull request](https://github.com/cph-cachet/flutter-plugins/pulls).
-
-
