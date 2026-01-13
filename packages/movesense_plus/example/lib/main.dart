@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:movesense_flutter/movesense_flutter.dart';
+import 'package:movesense_plus/movesense_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(const MovesenseApp());

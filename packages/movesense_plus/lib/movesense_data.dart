@@ -1,4 +1,4 @@
-part of 'movesense_flutter.dart';
+part of 'movesense_plus.dart';
 
 /// Information about used device and the platform which is running on it.
 /// Contains knowledge about the hardware version, serial number, app name or

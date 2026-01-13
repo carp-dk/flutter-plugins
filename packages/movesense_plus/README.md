@@ -7,7 +7,7 @@ This plugin supports the following features, which is the most commonly used sub
 * scan for Movensense devices (and stop scanning again)
 * connect and disconnect to a device
 * get device and state information
-* get a stream of the following data from a device:
+* get a stream of the following sensor data from a device:
   * heart rate
   * ECG
   * IMU
@@ -43,11 +43,11 @@ This will ensure that the MDS library is linked correctly. If you need to use fr
 
 ### Android
 
-Download `mdslib-x.x.x-release.aar` from the [movesense-mobile-lib](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/) repository and put it somewhere under 'android' folder of your app. Preferably create a new folder named `android/libs` and put it there.
+Download `mdslib-x.x.x-release.aar` from the [movesense-mobile-lib](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/) repository and put it somewhere under `android` folder of your app. Preferably create a new folder named `android/libs` and put it there.
 
-In the `build.gradle` of your android project, add the following lines (assuming `.aar` file is in `android/libs`):
+In the `build.gradle` of your android project, add the following lines (assuming `.aar` file is in `android/libs`) for Groovy:
 
-```graddle
+```groovy
 allprojects {
     repositories {
         ...
@@ -58,7 +58,11 @@ allprojects {
 }
 ```
 
+Or if using Kotlin, use `dirs("$rootDir/libs")`.
+
 ## Usage
+
+Import `package:movesense_plus/movesense_plus.dart` and use the singleton `Movesense()` to scan for Movensense device. Once a `MovesenseDevice` is found, start connecting and accessing device info and listen to sensor data streams.
 
 ### Scanning for devices
 
@@ -94,7 +98,7 @@ final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
 device.connect();
 ```
 
-Connection status is available in the `status` can is emitted in the `statusEvents` stream.
+Connection status is available in the `status` field and is also emitted in the `statusEvents` stream.
 
 ```dart
 print(device.status);
@@ -104,7 +108,7 @@ device.statusEvents.listen((status) {
 });
 ```
 
-### Accessing device information and battery status
+### Accessing device information, battery status, and system states
 
 The following device information and status is available as getter methods:
 
@@ -157,7 +161,7 @@ stateSubscription = device
     });
 ```
 
-Note, however, that listening to system state events on a Movensense device comes with a lot of limitations. First of all, you can only listen to one type of state events at a time. Second, not all Movesense devices seems to support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
+> **NOTE:** Listening to system state events on a Movensense device comes with a lot of limitations. First of all, you can [only listen to one type of state events at a time](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15). Second, not all Movesense devices seems to support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
 
 ## Example App
 

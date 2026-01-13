@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="30" />
 
     <application
-        android:label="movesense_flutter_example"
+        android:label="movesense_plus_example"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,5 +1,5 @@
-name: movesense_flutter_example
-description: "An example of how to use the movesense_flutter plugin."
+name: movesense_plus_example
+description: "An example of how to use the movesense_plus plugin."
 publish_to: 'none'
 version: 0.1.0
 
@@ -11,8 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  movesense_flutter:
-    path: ../../movesense_flutter/
+  movesense_plus:
+    path: ../../movesense_plus/
 
   cupertino_icons: ^1.0.2
   permission_handler: ^11.0.0

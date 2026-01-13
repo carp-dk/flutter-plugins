@@ -1,4 +1,4 @@
-part of 'movesense_flutter.dart';
+part of 'movesense_plus.dart';
 
 /// A class representing a Movesense device.
 class MovesenseDevice {
