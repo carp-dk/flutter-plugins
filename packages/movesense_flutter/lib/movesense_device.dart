@@ -2,6 +2,9 @@ part of 'movesense_flutter.dart';
 
 /// A class representing a Movesense device.
 class MovesenseDevice {
+  MovesenseDeviceInfo? _deviceInfo;
+  DeviceBatteryLevel _batteryLevel = DeviceBatteryLevel.unknown;
+
   /// The Movesense device address.
   ///
   /// Address is Bluetooth MAC address for Android devices and UUID for iOS devices.
@@ -27,8 +30,8 @@ class MovesenseDevice {
     }
   }
 
-  /// A stream of connection status of the device.
-  Stream<DeviceConnectionStatus> get statusStream =>
+  /// A stream of connection status events of the device.
+  Stream<DeviceConnectionStatus> get statusEvents =>
       _statusController.stream.asBroadcastStream();
   final _statusController =
       StreamController<DeviceConnectionStatus>.broadcast();
@@ -47,10 +50,14 @@ class MovesenseDevice {
   bool get isConnected => serial != null;
   // bool get isConnected => status == DeviceConnectionStatus.connected;
 
-  /// The latest device info for the connected Movesense device.
+  /// The device info for the connected Movesense device.
   /// Only available after device is connected.
   /// See https://www.movesense.com/docs/esw/api_reference/#info
-  MovesenseDeviceInfo? deviceInfo;
+  MovesenseDeviceInfo? get deviceInfo => _deviceInfo;
+
+  /// The battery level of the device, if known.
+  /// Battery level is updated every 10 minutes when connected.
+  DeviceBatteryLevel? get batteryLevel => _batteryLevel;
 
   /// Connect to the Movesense device using the [address] specified.
   /// If the address is not set, an exception is thrown.
@@ -64,8 +71,11 @@ class MovesenseDevice {
     Mds.connect(
       address!,
       // onConnected
-      (serial) {
+      (serial) async {
         this.serial = serial;
+        await getDeviceInfo(); // fetch device info upon connection
+        await getBatteryStatus(); // fetch battery status upon connection
+
         status = DeviceConnectionStatus.connected;
       },
       // onDisconnected
@@ -86,7 +96,7 @@ class MovesenseDevice {
 
   /// Get the detailed info about this Movesense device.
   /// See https://www.movesense.com/docs/esw/api_reference/#info
-  /// Returns a Future that completes with a Map containing the device info,
+  /// Returns [MovesenseDeviceInfo] on success,
   /// or null if the device is not connected.
   Future<MovesenseDeviceInfo?> getDeviceInfo() async {
     // fast out if not connected
@@ -99,17 +109,17 @@ class MovesenseDevice {
       "{}",
       // onSuccess
       ((info, statusCode) {
-        deviceInfo = MovesenseDeviceInfo.fromJsonString(info);
+        _deviceInfo = MovesenseDeviceInfo.fromMovesenseData(info);
 
         // Try to figure out the type of device based on the "hw" property
         // H3 is "HR+", H4 is "HR2", A1 is "MD"
-        deviceType = switch (deviceInfo?.hw.toUpperCase()) {
+        deviceType = switch (_deviceInfo?.hw.toUpperCase()) {
           'A1' => MovesenseDeviceType.MD,
           'H3' => MovesenseDeviceType.HR_PLUS,
           'H4' => MovesenseDeviceType.HR2,
           _ => MovesenseDeviceType.unknown,
         };
-        completer.complete(deviceInfo);
+        completer.complete(_deviceInfo);
       }),
       // onError
       (error, statusCode) =>
@@ -117,37 +127,125 @@ class MovesenseDevice {
     );
 
     return completer.future;
-
-    // var data = MdsAsync.get(Mds.createRequestUri(serial!, "/Info"), "{}")
-    //     .then((info) {
-    //       debugPrint('$runtimeType - Movesense Device Info:\n$info');
-    //       final dataContent = json.decode(info);
-    //       deviceInfo = dataContent["Content"] as Map<String, dynamic>;
-    //       String hw = (deviceInfo!["hw"] as String).toUpperCase();
-    //       debugPrint('$runtimeType - HW: $hw');
-    //       // Try to figure out the type of device based on the "hw" property
-    //       // H3 is "HR+", H4 is "HR2", A1 is "MD"
-    //       deviceType = switch (hw) {
-    //         'A1' => MovesenseDeviceType.MD,
-    //         'H3' => MovesenseDeviceType.HR_PLUS,
-    //         'H4' => MovesenseDeviceType.HR2,
-    //         _ => MovesenseDeviceType.unknown,
-    //       };
-    //       return deviceInfo;
-    //     })
-    //     .catchError((error) {
-    //       Future.error('Error getting Movesense Device Info: $error');
-    //     });
-
-    // return data;
   }
 
-  /// A stream of heart rate measurements from the Movesense device.
+  /// Get battery status from the device.
+  Future<DeviceBatteryLevel> getBatteryStatus() {
+    // fast out if not connected
+    if (!isConnected) return Future.value(DeviceBatteryLevel.unknown);
+
+    var completer = Completer<DeviceBatteryLevel>();
+    _batteryLevel = DeviceBatteryLevel.unknown;
+
+    Mds.get(
+      Mds.createRequestUri(serial!, "/System/States/1"),
+      "{}",
+      ((data, statusCode) {
+        final dataContent = json.decode(data);
+        num batteryState = dataContent["Content"] as num;
+        // Movesense reports "OK" (0) or "LOW" (1) battery state
+        _batteryLevel = batteryState == 0
+            ? DeviceBatteryLevel.ok
+            : DeviceBatteryLevel.low;
+        completer.complete(_batteryLevel);
+      }),
+      (error, statusCode) {
+        _batteryLevel = DeviceBatteryLevel.unknown;
+        completer.complete(_batteryLevel);
+      },
+    );
+    return completer.future;
+  }
+
+  /// Get the state of the device.
+  /// See https://www.movesense.com/docs/esw/api_reference/#systemstates
+  ///
+  /// Returns [MovesenseState] on success,
+  /// or null if the device is not connected.
+  Future<MovesenseState?> getState(SystemStateComponent state) {
+    // fast out if not connected
+    if (!isConnected) return Future.value(null);
+
+    var completer = Completer<MovesenseState?>();
+
+    Mds.get(
+      Mds.createRequestUri(serial!, "/System/States/${state.index}"),
+      "{}",
+      ((data, _) =>
+          completer.complete(MovesenseState.fromMovesenseData(state, data))),
+      (error, _) => completer.complete(null),
+    );
+    return completer.future;
+  }
+
+  /// A stream of heart rate (HR) measurements from the Movesense device.
   /// Only available when the device is connected.
-  Stream<int> get heartRate => !isConnected
+  Stream<int> get hr => !isConnected
       ? Stream.empty()
       : MdsAsync.subscribe(Mds.createSubscriptionUri(serial!, "/Meas/HR"), "{}")
             .map((data) => (data["Body"]["average"] as num).toInt())
+            .asBroadcastStream();
+
+  /// A stream of ECG measurements from the Movesense device collected at 125 Hz.
+  /// Only available when the device is connected.
+  Stream<MovesenseECG> get ecg => !isConnected
+      ? Stream.empty()
+      : MdsAsync.subscribe(
+              Mds.createSubscriptionUri(serial!, "/Meas/ECG/125"),
+              "{}",
+            )
+            .map((data) => MovesenseECG.fromMovesenseData(data))
+            .asBroadcastStream();
+
+  /// A stream of IMU measurements from the Movesense device collected at 13 Hz (lowest).
+  /// Only available when the device is connected.
+  Stream<MovesenseIMU> get imu => !isConnected
+      ? Stream.empty()
+      : MdsAsync.subscribe(
+              Mds.createSubscriptionUri(serial!, "/Meas/IMU9/13"),
+              "{}",
+            )
+            .map((data) => MovesenseIMU.fromMovesenseData(data))
+            .asBroadcastStream();
+
+  /// A stream of temperature measurements from the Movesense device.
+  /// Only available when the device is connected.
+  Stream<MovesenseTemperature> get temperature => !isConnected
+      ? Stream.empty()
+      : MdsAsync.subscribe(
+              Mds.createSubscriptionUri(serial!, "/Meas/Temp"),
+              "{}",
+            )
+            .map((data) => MovesenseTemperature.fromMovesenseData(data))
+            .asBroadcastStream();
+
+  /// Get a stream of state events for a specific [component] from the Movesense device.
+  /// The types of state changes available are listed in [SystemStateComponent].
+  /// See https://www.movesense.com/docs/esw/api_reference/#systemstates
+  ///
+  /// **NOTE**, that currently there is a limitation to the Movesense API and you
+  /// can only subscribe to a single type of event at a time.
+  /// See issue [#15](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15).
+  ///
+  /// Also note that not all state changes are supported on all types of devices.
+  /// For example, it seems like only the 'connectors' and 'tap' states are supported
+  /// on the Movesense MD and HR2 devices.
+  ///
+  /// The returned stream emits [MovesenseState] objects representing
+  /// the state change events.
+  ///
+  /// Only available when the device is connected.
+  Stream<MovesenseState> getStateEvents(SystemStateComponent component) =>
+      !isConnected
+      ? Stream.empty()
+      : MdsAsync.subscribe(
+              Mds.createSubscriptionUri(
+                serial!,
+                "/System/States/${component.index}",
+              ),
+              "{}",
+            )
+            .map((data) => MovesenseState.fromMovesenseData(component, data))
             .asBroadcastStream();
 }
 
@@ -169,4 +267,19 @@ enum MovesenseDeviceType {
   FLASH,
 }
 
+/// Enumeration of the connection status of the Movesense device.
 enum DeviceConnectionStatus { disconnected, connecting, connected, error }
+
+/// Enumeration of the battery level of the Movesense device.
+enum DeviceBatteryLevel { low, ok, unknown }
+
+/// Enumeration of the type of system state components available on the Movesense device.
+/// See https://www.movesense.com/docs/esw/api_reference/#systemstates
+enum SystemStateComponent {
+  movement,
+  battery,
+  connectors,
+  doubleTap,
+  tap,
+  freeFall,
+}

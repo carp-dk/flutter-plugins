@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:mdsflutter/Mds.dart';
 
 part 'movesense_device.dart';
-part 'device_info.dart';
+part 'movesense_data.dart';
 
 class Movesense {
   static final Movesense _instance = Movesense._();

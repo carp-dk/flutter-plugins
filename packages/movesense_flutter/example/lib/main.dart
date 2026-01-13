@@ -28,6 +28,7 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
   final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
   bool isSampling = false;
   StreamSubscription<int>? hrSubscription;
+  StreamSubscription<MovesenseState>? stateSubscription;
 
   @override
   void initState() {
@@ -54,21 +55,17 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             StreamBuilder<DeviceConnectionStatus>(
-              stream: device.statusStream,
+              stream: device.statusEvents,
               builder: (context, snapshot) =>
                   Text('Movesense [${device.address}] - ${device.status.name}'),
             ),
             const Text('Your heart rate is:'),
             StreamBuilder<int>(
-              stream: device.heartRate,
-              builder: (context, snapshot) {
-                var displayText = '...';
-                if (snapshot.hasData) displayText = '${snapshot.data}';
-                return Text(
-                  displayText,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                );
-              },
+              stream: device.hr,
+              builder: (context, snapshot) => Text(
+                snapshot.hasData ? '${snapshot.data}' : '...',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
             ),
           ],
         ),
@@ -84,25 +81,40 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
     );
   }
 
+  /// Handle button press to connect to device and start/stop sampling.
   void onButtonPressed() {
     setState(() {
-      // Movesense().devices.listen((device) {
-      //   debugPrint('Discovered device: ${device.name} [${device.address}]');
-      // });
-      // Movesense().scan();
       if (!device.isConnected) {
+        // if not connected, connect to the device
         device.connect();
       } else {
-        device.getDeviceInfo();
-        //   // if (!isSampling) {
-        //   //   hrSubscription = device.heartRate.listen((hr) {
-        //   //     debugPrint('Heart Rate: $hr');
-        //   //   });
-        //   //   isSampling = true;
-        //   // } else {
-        //   //   hrSubscription?.cancel();
-        //   //   isSampling = false;
-        //   // }
+        // when connected, first get device info and battery status
+        device.getDeviceInfo().then(
+          (info) => debugPrint('>> Product name: ${info?.productName}'),
+        );
+
+        device.getBatteryStatus().then(
+          (battery) => debugPrint('>> Battery level: ${battery.name}'),
+        );
+        // then start/stop sampling
+        if (!isSampling) {
+          // Example of subscribing to heart rate data
+          hrSubscription = device.hr.listen((hr) {
+            debugPrint('>> Heart Rate: $hr');
+          });
+
+          // Example of subscribing to tap state changes
+          stateSubscription = device
+              .getStateEvents(SystemStateComponent.tap)
+              .listen((state) {
+                debugPrint('>> State: ${state.toString()}');
+              });
+          isSampling = true;
+        } else {
+          hrSubscription?.cancel();
+          stateSubscription?.cancel();
+          isSampling = false;
+        }
       }
     });
   }
