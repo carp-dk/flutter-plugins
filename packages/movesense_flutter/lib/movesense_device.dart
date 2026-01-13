@@ -47,13 +47,12 @@ class MovesenseDevice {
   bool get isConnected => serial != null;
   // bool get isConnected => status == DeviceConnectionStatus.connected;
 
-  // TODO: make a device info class instead of using a Map.
   /// The latest device info for the connected Movesense device.
   /// Only available after device is connected.
   /// See https://www.movesense.com/docs/esw/api_reference/#info
-  Map<String, dynamic>? deviceInfo;
+  MovesenseDeviceInfo? deviceInfo;
 
-  /// Connect to the Movesense device using the [address].
+  /// Connect to the Movesense device using the [address] specified.
   /// If the address is not set, an exception is thrown.
   Future<void> connect() async {
     if (!canConnect()) {
@@ -89,26 +88,22 @@ class MovesenseDevice {
   /// See https://www.movesense.com/docs/esw/api_reference/#info
   /// Returns a Future that completes with a Map containing the device info,
   /// or null if the device is not connected.
-  Future<Map<String, dynamic>?> getDeviceInfo() async {
+  Future<MovesenseDeviceInfo?> getDeviceInfo() async {
     // fast out if not connected
     if (!isConnected) return null;
 
-    var completer = Completer<Map<String, dynamic>?>();
+    var completer = Completer<MovesenseDeviceInfo?>();
 
     Mds.get(
       Mds.createRequestUri(serial!, "/Info"),
       "{}",
       // onSuccess
       ((info, statusCode) {
-        debugPrint('$runtimeType - Movesense Device Info:\n$info');
-        final dataContent = json.decode(info);
-        deviceInfo = dataContent["Content"] as Map<String, dynamic>;
-        String hw = (deviceInfo!["hw"] as String).toUpperCase();
-        debugPrint('$runtimeType - HW: $hw');
+        deviceInfo = MovesenseDeviceInfo.fromJsonString(info);
 
         // Try to figure out the type of device based on the "hw" property
         // H3 is "HR+", H4 is "HR2", A1 is "MD"
-        deviceType = switch (hw) {
+        deviceType = switch (deviceInfo?.hw.toUpperCase()) {
           'A1' => MovesenseDeviceType.MD,
           'H3' => MovesenseDeviceType.HR_PLUS,
           'H4' => MovesenseDeviceType.HR2,

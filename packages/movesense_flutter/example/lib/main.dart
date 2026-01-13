@@ -23,6 +23,7 @@ class MovesenseHomePage extends StatefulWidget {
 }
 
 class MovesenseHomePageState extends State<MovesenseHomePage> {
+  // My device address: 0C:8C:DC:1B:23:BF, serial 233830000816
   // Replace with your Movesense device address.
   final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
   bool isSampling = false;
@@ -85,18 +86,23 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
 
   void onButtonPressed() {
     setState(() {
+      // Movesense().devices.listen((device) {
+      //   debugPrint('Discovered device: ${device.name} [${device.address}]');
+      // });
+      // Movesense().scan();
       if (!device.isConnected) {
         device.connect();
       } else {
-        if (!isSampling) {
-          hrSubscription = device.heartRate.listen((hr) {
-            debugPrint('Heart Rate: $hr');
-          });
-          isSampling = true;
-        } else {
-          hrSubscription?.cancel();
-          isSampling = false;
-        }
+        device.getDeviceInfo();
+        //   // if (!isSampling) {
+        //   //   hrSubscription = device.heartRate.listen((hr) {
+        //   //     debugPrint('Heart Rate: $hr');
+        //   //   });
+        //   //   isSampling = true;
+        //   // } else {
+        //   //   hrSubscription?.cancel();
+        //   //   isSampling = false;
+        //   // }
       }
     });
   }
