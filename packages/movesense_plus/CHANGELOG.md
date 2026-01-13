@@ -2,7 +2,7 @@
 
 Initial release supporting:
 
-* scan for Movensense devices (and stop scanning again)
+* scan for Movesense devices (and stop scanning again)
 * connect and disconnect to a device
 * get device and state information
 * get a stream of the following data from a device:

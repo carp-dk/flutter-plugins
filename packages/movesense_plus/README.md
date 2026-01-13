@@ -2,9 +2,9 @@ A Flutter plugin for accessing the [Movesense](https://www.movesense.com/) famil
 
 ## Features
 
-This plugin supports the following features, which is the most commonly used sub-set of the total [Movensene API](https://www.movesense.com/docs/esw/api_reference/):
+This plugin supports the following features, which is the most commonly used sub-set of the total [Movesense API](https://www.movesense.com/docs/esw/api_reference/):
 
-* scan for Movensense devices (and stop scanning again)
+* scan for Movesense devices (and stop scanning again)
 * connect and disconnect to a device
 * get device and state information
 * get a stream of the following sensor data from a device:
