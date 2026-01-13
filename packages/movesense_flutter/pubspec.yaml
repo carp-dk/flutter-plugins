@@ -1,0 +1,26 @@
+name: movesense_flutter
+description: "A Flutter package for Movesense sensor integration. Wraps the MDS plugin and provides easy access to Movesense device features and data streams."
+version: 1.0.0
+homepage: https://github.com/cph-cachet/flutter-plugins/tree/master/packages/movesense_flutter
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+# This package only supports iOS and Android
+platforms:
+  android:
+  ios:
+
+dependencies:
+  flutter:
+    sdk: flutter
+  mdsflutter: ^2.2.0 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+
+
+flutter:
