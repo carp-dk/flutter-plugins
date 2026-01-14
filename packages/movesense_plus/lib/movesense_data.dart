@@ -235,6 +235,29 @@ class MovesenseState extends MovesenseData {
   String toString() => state.name;
 }
 
+/// Heart rate (HR) reading with average BPM and latest R-R interval.
+///
+/// See https://www.movesense.com/docs/esw/api_reference/#meashr
+class MovesenseHR {
+  /// The average heart rate (BPM).
+  final int average;
+
+  /// The latest R-R measurement (ms).
+  final int? rr;
+
+  MovesenseHR(this.average, [this.rr]);
+
+  factory MovesenseHR.fromMovesenseData(dynamic data) {
+    num average = data["Body"]["average"] as num;
+    // returns a list of R-R measures with only one entry (the latest)
+    int rr = (data["Body"]["rrData"] as List<dynamic>)
+        .map((e) => e as int)
+        .toList()[0];
+
+    return MovesenseHR(average.toInt(), rr);
+  }
+}
+
 /// Electrocardiogram (ECG) reading.
 ///
 /// See https://www.movesense.com/docs/esw/api_reference/#measecg

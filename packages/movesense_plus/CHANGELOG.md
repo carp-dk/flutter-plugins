@@ -1,3 +1,7 @@
+## 1.1.0
+
+* added R-R interval to HR reading
+
 ## 1.0.0
 
 Initial release supporting:

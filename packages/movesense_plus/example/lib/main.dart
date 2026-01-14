@@ -23,11 +23,10 @@ class MovesenseHomePage extends StatefulWidget {
 }
 
 class MovesenseHomePageState extends State<MovesenseHomePage> {
-  // My device address: 0C:8C:DC:1B:23:BF, serial 233830000816
   // Replace with your Movesense device address.
   final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
   bool isSampling = false;
-  StreamSubscription<int>? hrSubscription;
+  StreamSubscription<MovesenseHR>? hrSubscription;
   StreamSubscription<MovesenseState>? stateSubscription;
 
   @override
@@ -60,10 +59,10 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
                   Text('Movesense [${device.address}] - ${device.status.name}'),
             ),
             const Text('Your heart rate is:'),
-            StreamBuilder<int>(
+            StreamBuilder<MovesenseHR>(
               stream: device.hr,
               builder: (context, snapshot) => Text(
-                snapshot.hasData ? '${snapshot.data}' : '...',
+                snapshot.hasData ? '${snapshot.data?.average}' : '...',
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
             ),
@@ -100,7 +99,9 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
         if (!isSampling) {
           // Example of subscribing to heart rate data
           hrSubscription = device.hr.listen((hr) {
-            debugPrint('>> Heart Rate: $hr');
+            debugPrint(
+              '>> Heart Rate: ${hr.average}, R-R Interval: ${hr.rr} ms',
+            );
           });
 
           // Example of subscribing to tap state changes

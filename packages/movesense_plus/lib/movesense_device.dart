@@ -178,16 +178,15 @@ class MovesenseDevice {
     return completer.future;
   }
 
-  /// A stream of heart rate (HR) measurements from the Movesense device.
-  /// Only available when the device is connected.
-  Stream<int> get hr => !isConnected
+  /// A stream of heart rate (HR) and R-R interval measurements from the
+  /// Movesense device.
+  Stream<MovesenseHR> get hr => !isConnected
       ? Stream.empty()
       : MdsAsync.subscribe(Mds.createSubscriptionUri(serial!, "/Meas/HR"), "{}")
-            .map((data) => (data["Body"]["average"] as num).toInt())
+            .map((data) => MovesenseHR.fromMovesenseData(data))
             .asBroadcastStream();
 
   /// A stream of ECG measurements from the Movesense device collected at 125 Hz.
-  /// Only available when the device is connected.
   Stream<MovesenseECG> get ecg => !isConnected
       ? Stream.empty()
       : MdsAsync.subscribe(
@@ -198,7 +197,6 @@ class MovesenseDevice {
             .asBroadcastStream();
 
   /// A stream of IMU measurements from the Movesense device collected at 13 Hz (lowest).
-  /// Only available when the device is connected.
   Stream<MovesenseIMU> get imu => !isConnected
       ? Stream.empty()
       : MdsAsync.subscribe(
@@ -209,7 +207,6 @@ class MovesenseDevice {
             .asBroadcastStream();
 
   /// A stream of temperature measurements from the Movesense device.
-  /// Only available when the device is connected.
   Stream<MovesenseTemperature> get temperature => !isConnected
       ? Stream.empty()
       : MdsAsync.subscribe(
@@ -233,8 +230,6 @@ class MovesenseDevice {
   ///
   /// The returned stream emits [MovesenseState] objects representing
   /// the state change events.
-  ///
-  /// Only available when the device is connected.
   Stream<MovesenseState> getStateEvents(SystemStateComponent component) =>
       !isConnected
       ? Stream.empty()

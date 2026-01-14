@@ -18,6 +18,8 @@ This plugin supports the following features, which is the most commonly used sub
 
 Similar to the [mdsflutter](https://pub.dev/packages/mdsflutter) plugin, the Movesense library needs to be installed in your app.
 
+> **NOTE:** This plugin does not handle permission to access Bluetooth. Use the [permission_handler](https://pub.dev/packages/permission_handler) plugin to request access to scan and connect to BLE devices. See the example app.
+
 ### iOS
 
 Install the Movesense iOS library using CocoaPods with adding this line to your app's Podfile:
@@ -130,7 +132,7 @@ print('Battery level: ${battery.name}');
 
 The following sensor data is available as streams:
 
-* `hr` - Heart rate as an `int` at 1 Hz.
+* `hr` - Heart rate as average bpm and R-R interval at 1 Hz.
 * `ecg` - Electrocardiography (ECG) as a sample of reading at 125 Hz.
 * `imu` - 9-axis Inertial Movement Unit (IMU) at 13 Hz.
 * `temperature` - Surface temperature of the device in Kelvin.
@@ -139,8 +141,8 @@ For example, you can listen to the heart rate stream like this:
 
 ```dart
 // Start listening to the stream of heart rate readings
-var hrSubscription = device.hr.listen((hr) {
-  print('Heart Rate: $hr');
+hrSubscription = device.hr.listen((hr) {
+  print('Heart Rate: ${hr.average}, R-R Interval: ${hr.rr} ms');
 });
 
 // Stop listening.
@@ -161,15 +163,15 @@ stateSubscription = device
     });
 ```
 
-> **NOTE:** Listening to system state events on a Movensense device comes with a lot of limitations. First of all, you can [only listen to one type of state events at a time](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15). Second, not all Movesense devices seems to support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
+> **NOTE:** Listening to system state events on a Movensense device comes with some limitations. First of all, you can [only listen to one type of state event at a time](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15). Second, not all Movesense devices seems to support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
 
 ## Example App
 
-The included example app is very simple. It shows how to connect to a device with a known `address` and once connected, it listens to the heart rate (`hr`) stream and shows it in the app. Use the floating button to (i) connect, (ii) start streaming heart rate data, and (iii) stop streaming again.
+The included example app is very simple. It shows how to connect to a device with a known `address` and once connected, it listens to the heart rate (`hr`) stream and shows average bpm in the app. Use the floating button to (i) connect, (ii) start streaming heart rate data, and (iii) stop streaming again.
 
 ## Features and bugs
 
-Please read about existing issues and file new feature requests and bug reports at the issue tracker.
+Please read about existing [issues](https://github.com/carp-dk/flutter-plugins/issues) and file new feature requests and bug reports as issues. We also happily accept contributions as [pull requests](https://github.com/carp-dk/flutter-plugins/pulls).
 
 ## License
 
