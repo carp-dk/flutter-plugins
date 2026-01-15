@@ -73,7 +73,7 @@ The singleton `Movesense` can be used for scanning devices:
 ```dart
 /// Listen for discovered devices
 Movesense().devices.listen((device) {
-  debugPrint('Discovered device: ${device.name} [${device.address}]');
+  print('Discovered device: ${device.name} [${device.address}]');
 });
 /// Start scanning.
 Movesense().scan();

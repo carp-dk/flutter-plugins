@@ -7,7 +7,8 @@ class MovesenseDevice {
 
   /// The Movesense device address.
   ///
-  /// Address is Bluetooth MAC address for Android devices and UUID for iOS devices.
+  /// Address is Bluetooth MAC address for Android devices and UUID for
+  /// iOS devices.
   String? address;
 
   /// The Movesense device serial number.
@@ -36,6 +37,13 @@ class MovesenseDevice {
   final _statusController =
       StreamController<DeviceConnectionStatus>.broadcast();
 
+  /// Creates a new Movesense device with the given [address].
+  ///
+  /// The [address] must be set in before connecting to the device.
+  /// Note that the [address] format is platform dependent:
+  /// - On Android, the address is the Bluetooth MAC address (e.g. "0C:8C:DC:1B:23:BF").
+  /// - On iOS, the address is the UUID of the device (e.g. "00000000-0000-0000-0000-000000000000").
+  /// The [serial], [name] and [deviceType] are set upon successful connection.
   MovesenseDevice({
     this.address,
     this.serial,
