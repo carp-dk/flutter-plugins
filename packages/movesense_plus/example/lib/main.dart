@@ -84,10 +84,10 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
   void onButtonPressed() {
     setState(() {
       if (!device.isConnected) {
-        // if not connected, connect to the device
+        // if not connected, start connecting to the device
         device.connect();
       } else {
-        // when connected, first get device info and battery status
+        // if connected, first get device info and battery status
         device.getDeviceInfo().then(
           (info) => debugPrint('>> Product name: ${info?.productName}'),
         );

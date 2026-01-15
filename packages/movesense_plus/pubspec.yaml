@@ -1,6 +1,6 @@
 name: movesense_plus
 description: "A Flutter package for Movesense sensor integration. Wraps the MDS plugin and provides easy access to Movesense device features and data streams."
-version: 1.1.1
+version: 1.2.0
 homepage: https://github.com/cph-cachet/flutter-plugins/tree/master/packages/movesense_plus
 
 environment:

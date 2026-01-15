@@ -1,3 +1,8 @@
+## 1.2.0
+
+* connect and disconnect method not async
+* update to docs
+
 ## 1.1.1
 
 Update of docs to highlight that the `address` format is platform dependent:
