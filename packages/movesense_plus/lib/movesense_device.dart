@@ -63,13 +63,14 @@ class MovesenseDevice {
   /// See https://www.movesense.com/docs/esw/api_reference/#info
   MovesenseDeviceInfo? get deviceInfo => _deviceInfo;
 
-  /// The battery level of the device, if known.
-  /// Battery level is updated every 10 minutes when connected.
-  DeviceBatteryLevel? get batteryLevel => _batteryLevel;
+  /// The latest known battery level of the device.
+  /// Battery level can be obtained by calling [getBatteryStatus].
+  DeviceBatteryLevel get batteryLevel => _batteryLevel;
 
-  /// Connect to the Movesense device using the [address] specified.
+  /// Initiate connection to the Movesense device using the [address] specified.
   /// If the address is not set, an exception is thrown.
-  Future<void> connect() async {
+  /// Connection status updates are emitted on the [statusEvents] stream.
+  void connect() {
     if (!canConnect()) {
       throw Exception('Cannot connect to device - address is not set.');
     }
@@ -96,10 +97,12 @@ class MovesenseDevice {
     );
   }
 
-  /// Disconnect from the Movesense device.
-  Future<void> disconnect() async {
+  /// Initiate disconnect from the Movesense device.
+  void disconnect() async {
     if (!isConnected) return;
+    serial = null;
     Mds.disconnect(address!);
+    status = DeviceConnectionStatus.disconnected;
   }
 
   /// Get the detailed info about this Movesense device.
@@ -151,7 +154,7 @@ class MovesenseDevice {
       ((data, statusCode) {
         final dataContent = json.decode(data);
         num batteryState = dataContent["Content"] as num;
-        // Movesense reports "OK" (0) or "LOW" (1) battery state
+        // Movesense reports "OK" (0) or "low" (1) battery state
         _batteryLevel = batteryState == 0
             ? DeviceBatteryLevel.ok
             : DeviceBatteryLevel.low;
@@ -274,7 +277,8 @@ enum MovesenseDeviceType {
 enum DeviceConnectionStatus { disconnected, connecting, connected, error }
 
 /// Enumeration of the battery level of the Movesense device.
-enum DeviceBatteryLevel { low, ok, unknown }
+/// See https://www.movesense.com/docs/esw/api_reference/#systemstates
+enum DeviceBatteryLevel { ok, low, unknown }
 
 /// Enumeration of the type of system state components available on the Movesense device.
 /// See https://www.movesense.com/docs/esw/api_reference/#systemstates
