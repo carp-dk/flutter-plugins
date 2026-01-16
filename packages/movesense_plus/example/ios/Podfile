@@ -28,9 +28,15 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  # replace "use_frameworks!" with static packages for the Movesense pod
+  use_modular_headers!
+  use_frameworks! :linkage => :static
+
+  # add Movesense pod
+  pod 'Movesense', :git => 'https://bitbucket.org/movesense/movesense-mobile-lib.git'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  
   target 'RunnerTests' do
     inherit! :search_paths
   end

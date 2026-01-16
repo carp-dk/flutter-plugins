@@ -23,8 +23,16 @@ class MovesenseHomePage extends StatefulWidget {
 }
 
 class MovesenseHomePageState extends State<MovesenseHomePage> {
+  // Test Movesense device address:
+  // Name: Movesense 233830000816
+  // Android : 0C:8C:DC:1B:23:BF
+  // iOS : 89BD8BF8-C9E7-0395-3B1D-119082516DDE
+
   // Replace with your Movesense device address.
-  final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
+  // final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
+  final MovesenseDevice device = MovesenseDevice(
+    address: '89BD8BF8-C9E7-0395-3B1D-119082516DDE',
+  );
   bool isSampling = false;
   StreamSubscription<MovesenseHR>? hrSubscription;
   StreamSubscription<MovesenseState>? stateSubscription;
@@ -33,6 +41,11 @@ class MovesenseHomePageState extends State<MovesenseHomePage> {
   void initState() {
     super.initState();
     requestPermissions();
+
+    // Movesense().scan();
+    // Movesense().devices.listen((device) {
+    //   debugPrint('>> Device: ${device.address} - ${device.name}');
+    // });
   }
 
   Future<void> requestPermissions() async {

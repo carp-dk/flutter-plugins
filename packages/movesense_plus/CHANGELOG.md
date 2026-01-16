@@ -1,3 +1,7 @@
+## 1.2.1
+
+* update of example app to run on iOS incl. docs
+
 ## 1.2.0
 
 * connect and disconnect method not async
