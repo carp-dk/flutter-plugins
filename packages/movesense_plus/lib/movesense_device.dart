@@ -42,7 +42,7 @@ class MovesenseDevice {
   /// The [address] must be set in before connecting to the device.
   /// Note that the [address] format is platform dependent:
   /// - On Android, the address is the Bluetooth MAC address (e.g. "0C:8C:DC:1B:23:BF").
-  /// - On iOS, the address is the UUID of the device (e.g. "00000000-0000-0000-0000-000000000000").
+  /// - On iOS, the address is the UUID of the device (e.g. "89BD8BF8-C9E7-0395-3B1D-119082516DDE").
   /// The [serial], [name] and [deviceType] are set upon successful connection.
   MovesenseDevice({
     this.address,

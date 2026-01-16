@@ -1,4 +1,4 @@
-A Flutter plugin for accessing the [Movesense](https://www.movesense.com/) family of ECG devices. This is a developer-friendly wrapper of the [mdsflutter](https://pub.dev/packages/mdsflutter) plugin.
+A Flutter plugin for accessing the [Movesense](https://www.movesense.com/) family of ECG devices. This is a developer-friendly and strongly typed wrapper of the [mdsflutter](https://pub.dev/packages/mdsflutter) plugin.
 
 ## Features
 
@@ -16,25 +16,21 @@ This plugin supports the following features, which is the most commonly used sub
 
 ## Getting started
 
-Similar to the [mdsflutter](https://pub.dev/packages/mdsflutter) plugin, the Movesense library needs to be installed in your app.
-
 > **NOTE:** This plugin does not handle permission to access Bluetooth. Use the [permission_handler](https://pub.dev/packages/permission_handler) plugin to request access to scan and connect to BLE devices. See the example app.
+
+Similar to the [mdsflutter](https://pub.dev/packages/mdsflutter) plugin, the Movesense library needs to be installed in your app.
 
 ### iOS
 
-Install the Movesense iOS library using CocoaPods with adding this line to your app's Podfile:
+The Movesense iOS library is installed using CocoaPods by adding the following lines to your app's `ios/Podfile`:
 
-```shell
-pod 'Movesense', :git => 'ssh://git@altssh.bitbucket.org:443/movesense/movesense-mobile-lib.git'
-```
-
-Then set up your `ios/Podfile` as follows:
-
-```pod
+```ruby
 target 'Runner' do
+  # replace "use_frameworks!" with static packages for the Movesense pod
   use_modular_headers!
   use_frameworks! :linkage => :static
 
+  # add Movesense pod
   pod 'Movesense', :git => 'https://bitbucket.org/movesense/movesense-mobile-lib.git'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
@@ -45,7 +41,7 @@ This will ensure that the MDS library is linked correctly. If you need to use fr
 
 ### Android
 
-Download `mdslib-x.x.x-release.aar` from the [movesense-mobile-lib](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/) repository and put it somewhere under `android` folder of your app. Preferably create a new folder named `android/libs` and put it there.
+Download the latest `mdslib-x.x.x-release.aar` from the [movesense-mobile-lib](https://bitbucket.org/movesense/movesense-mobile-lib/src/master/) repository and put it somewhere under `android` folder of your app. Preferably create a new folder named `android/libs` and put it there.
 
 In the `build.gradle` of your android project, add the following lines (assuming `.aar` file is in `android/libs`) for Groovy:
 
@@ -84,7 +80,7 @@ Movesense().stopScan();
 
 ### Connecting to a device
 
-Scanning return a `MovesenseDevice` which can be used to connect to the device, like:
+Scanning returns a `MovesenseDevice` which can be used to initiate connection to the device, like:
 
 ```dart
 if (!device.isConnected) {
@@ -100,6 +96,11 @@ final MovesenseDevice device = MovesenseDevice(address: '0C:8C:DC:1B:23:BF');
 device.connect();
 ```
 
+> **NOTE:** The `address` format is platform dependent:
+>
+> * On Android, the address is the Bluetooth MAC address (e.g. "0C:8C:DC:1B:23:BF").
+> * On iOS, the address is the UUID of the device (e.g. "89BD8BF8-C9E7-0395-3B1D-119082516DDE").
+
 Connection status is available in the `status` field and is also emitted in the `statusEvents` stream.
 
 ```dart
@@ -112,10 +113,10 @@ device.statusEvents.listen((status) {
 
 ### Accessing device information, battery status, and system states
 
-The following device information and status is available as getter methods:
+Once connected, the following device information is available as getter methods:
 
 * `getDeviceInfo` - get the full [device info](https://www.movesense.com/docs/esw/api_reference/#info) of this Movesense device.
-* `getBatteryStatus` - get the [battery level](https://www.movesense.com/docs/esw/api_reference/#systemstates) ("OK" or "LOW") from the device.
+* `getBatteryStatus` - get the [battery level](https://www.movesense.com/docs/esw/api_reference/#systemstates) ("OK" or "LOW") of the device.
 * `getState` - get the [system state](https://www.movesense.com/docs/esw/api_reference/#systemstates) from the device (movement, connectors, doubleTap, tap, freeFall).
 
 For example, getting device info and battery level:
@@ -163,7 +164,7 @@ stateSubscription = device
     });
 ```
 
-> **NOTE:** Listening to system state events on a Movensense device comes with some limitations. First of all, you can [only listen to one type of state event at a time](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15). Second, not all Movesense devices seems to support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
+> **NOTE:** Listening to system state events on a Movensense device comes with some limitations. First of all, you can [only listen to one type of state event at a time](https://github.com/petri-lipponen-movesense/mdsflutter/issues/15). Second, not all Movesense devices support subscription of all types of state events. For example, it seems like only the 'connectors' and 'tap' states are supported on the Movesense MD and HR2 devices.
 
 ## Example App
 
