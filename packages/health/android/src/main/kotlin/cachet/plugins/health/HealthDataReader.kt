@@ -404,18 +404,28 @@ class HealthDataReader(
             }
 
             // Get energy burned data
-            val energyBurnedRequest = healthConnectClient.readRecords(
-                ReadRecordsRequest(
-                    recordType = TotalCaloriesBurnedRecord::class,
-                    timeRangeFilter = TimeRangeFilter.between(
-                        record.startTime,
-                        record.endTime,
-                    ),
-                ),
-            )
             var totalEnergyBurned = 0.0
-            for (energyBurnedRec in energyBurnedRequest.records) {
-                totalEnergyBurned += energyBurnedRec.energy.inKilocalories
+            try {
+                val grantedPermissions = healthConnectClient.permissionController.getGrantedPermissions()
+                val energyPermission = HealthPermission.getReadPermission(TotalCaloriesBurnedRecord::class)
+                if (grantedPermissions.contains(energyPermission)) {
+                    val energyBurnedRequest = healthConnectClient.readRecords(
+                        ReadRecordsRequest(
+                            recordType = TotalCaloriesBurnedRecord::class,
+                            timeRangeFilter = TimeRangeFilter.between(
+                                record.startTime,
+                                record.endTime,
+                            ),
+                        ),
+                    )
+                    for (energyBurnedRec in energyBurnedRequest.records) {
+                        totalEnergyBurned += energyBurnedRec.energy.inKilocalories
+                    }
+                } else {
+                    Log.i("FLUTTER_HEALTH", "TotalCaloriesBurned permission not granted; skipping energy aggregation")
+                }
+            } catch (e: Exception) {
+                Log.w("FLUTTER_HEALTH", "Skipping TotalCaloriesBurned: ${e.message}")
             }
 
             // Get steps data
