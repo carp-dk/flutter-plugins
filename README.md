@@ -30,7 +30,7 @@ These are the available plugins in this repository.
 | [audio_streamer](./packages/audio_streamer) | Stream audio as PCM from mic| ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/audio_streamer.svg)](https://pub.dartlang.org/packages/audio_streamer) |
 | [mobility_features](./packages/mobility_features) | Compute daily mobility features from location data | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/mobility_features.svg)](https://pub.dartlang.org/packages/mobility_features) |
 | [carp_background_location](./packages/carp_background_location) | Track location, even when app is in the background | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/carp_background_location.svg)](https://pub.dartlang.org/packages/carp_background_location) |
-| [flutter_foreground_service](./packages/flutter_foreground_service) | Foreground service for Android | ✔️ | ❌  | [![pub package](https://img.shields.io/pub/v/flutter_foreground_service.svg)](https://pub.dartlang.org/packages/flutter_foreground_service) |
+| [flutter_foreground_service](./packages/flutter_foreground_service) | **DISCONTINUED** - Foreground service for Android | ✔️ | ❌  | [![pub package](https://img.shields.io/pub/v/flutter_foreground_service.svg)](https://pub.dartlang.org/packages/flutter_foreground_service) |
 
 ## Issues
 
