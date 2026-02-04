@@ -1,0 +1,26 @@
+{
+  "Content": {
+    "manufacturerName": "Movesense Ltd",
+    "brandName": null,
+    "productName": "Movesense",
+    "variant": "Avocado",
+    "design": "black",
+    "hwCompatibilityId": "C",
+    "serial": "233830000816",
+    "pcbaSerial": "80413336500828200000100022666H4233",
+    "sw": "2.1.5",
+    "hw": "H4",
+    "additionalVersionInfo": null,
+    "addressInfo": [
+      {
+        "name": "BLE",
+        "address": "0C-8C-DC-1B-23-BF"
+      },
+      {
+        "name": "DFU-BLE",
+        "address": "E9-AC-4C-25-9A-65"
+      }
+    ],
+    "apiLevel": "1"
+  }
+}

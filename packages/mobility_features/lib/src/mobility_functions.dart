@@ -60,11 +60,9 @@ List<Move> _findMoves(List<Stop> stops, List<LocationSample> samples) {
 
 GeoLocation _computeCentroid(List<GeoSpatial> data) {
   double lat =
-      Stats.fromData(data.map((d) => (d.geoLocation.latitude)).toList()).median
-          as double;
+      Stats.fromData(data.map((d) => (d.geoLocation.latitude)).toList()).mean;
   double lon =
-      Stats.fromData(data.map((d) => (d.geoLocation.longitude)).toList()).median
-          as double;
+      Stats.fromData(data.map((d) => (d.geoLocation.longitude)).toList()).mean;
 
   return GeoLocation(lat, lon);
 }

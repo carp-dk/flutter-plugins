@@ -1,4 +1,4 @@
-library mobility_app;
+library;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -14,13 +14,10 @@ void main() => runApp(const MyApp());
 
 Widget entry(String key, String value, Icon icon) {
   return Container(
-      padding: const EdgeInsets.all(2),
-      margin: const EdgeInsets.all(3),
-      child: ListTile(
-        leading: icon,
-        title: Text(key),
-        trailing: Text(value),
-      ));
+    padding: const EdgeInsets.all(2),
+    margin: const EdgeInsets.all(3),
+    child: ListTile(leading: icon, title: Text(key), trailing: Text(value)),
+  );
 }
 
 String formatDate(DateTime date) => '${date.year}/${date.month}/${date.day}';
@@ -55,9 +52,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mobility Features Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const HomePage(title: 'Mobility Features Example'),
     );
   }
@@ -123,16 +118,19 @@ class HomePageState extends State<HomePage> {
 
     // map from [LocationDto] to [LocationSample]
     Stream<LocationSample> locationSampleStream = locationStream.map(
-        (location) => LocationSample(
-            GeoLocation(location.latitude, location.longitude),
-            DateTime.now()));
+      (location) => LocationSample(
+        GeoLocation(location.latitude, location.longitude),
+        DateTime.now(),
+      ),
+    );
 
     // provide the [MobilityFeatures] instance with the LocationSample stream
     await MobilityFeatures().startListening(locationSampleStream);
 
     // start listening to incoming MobilityContext objects
-    mobilitySubscription =
-        MobilityFeatures().contextStream.listen(onMobilityContext);
+    mobilitySubscription = MobilityFeatures().contextStream.listen(
+      onMobilityContext,
+    );
   }
 
   Future<bool> isLocationAlwaysGranted() async {
@@ -204,26 +202,33 @@ class HomePageState extends State<HomePage> {
       children: <Widget>[
         entry("Stops", "${_mobilityContext.stops?.length}", stopIcon),
         entry("Moves", "${_mobilityContext.moves?.length}", moveIcon),
-        entry("Significant Places",
-            "${_mobilityContext.numberOfSignificantPlaces}", placeIcon),
         entry(
-            "Home Stay",
-            _mobilityContext.homeStay == null || _mobilityContext.homeStay! < 0
-                ? "?"
-                : "${(_mobilityContext.homeStay! * 100).toStringAsFixed(1)}%",
-            homeStayIcon),
+          "Significant Places",
+          "${_mobilityContext.numberOfSignificantPlaces}",
+          placeIcon,
+        ),
         entry(
-            "Distance Traveled",
-            "${(_mobilityContext.distanceTraveled! / 1000).toStringAsFixed(2)} km",
-            distanceTraveledIcon),
+          "Home Stay",
+          _mobilityContext.homeStay == null || _mobilityContext.homeStay! < 0
+              ? "?"
+              : "${(_mobilityContext.homeStay! * 100).toStringAsFixed(1)}%",
+          homeStayIcon,
+        ),
         entry(
-            "Normalized Entropy",
-            "${_mobilityContext.normalizedEntropy?.toStringAsFixed(2)}",
-            entropyIcon),
+          "Distance Traveled",
+          "${(_mobilityContext.distanceTraveled! / 1000).toStringAsFixed(2)} km",
+          distanceTraveledIcon,
+        ),
         entry(
-            "Location Variance",
-            "${(111.133 * _mobilityContext.locationVariance!).toStringAsFixed(5)} km",
-            varianceIcon),
+          "Normalized Entropy",
+          "${_mobilityContext.normalizedEntropy?.toStringAsFixed(2)}",
+          entropyIcon,
+        ),
+        entry(
+          "Location Variance",
+          "${(111.133 * _mobilityContext.locationVariance!).toStringAsFixed(5)} km",
+          varianceIcon,
+        ),
       ],
     );
   }
@@ -231,28 +236,29 @@ class HomePageState extends State<HomePage> {
   List<Widget> get contentNoFeatures {
     return [
       Container(
-          margin: const EdgeInsets.all(25),
-          child: const Text(
-            'Move around to start generating features',
-            style: TextStyle(fontSize: 20),
-          ))
+        margin: const EdgeInsets.all(25),
+        child: const Text(
+          'Move around to start generating features',
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
     ];
   }
 
   List<Widget> get contentFeaturesReady {
     return [
       Container(
-          margin: const EdgeInsets.all(25),
-          child: Column(children: [
-            const Text(
-              'Statistics for today,',
-              style: TextStyle(fontSize: 20),
-            ),
+        margin: const EdgeInsets.all(25),
+        child: Column(
+          children: [
+            const Text('Statistics for today,', style: TextStyle(fontSize: 20)),
             Text(
               formatDate(_mobilityContext.date!),
               style: const TextStyle(fontSize: 20, color: Colors.blue),
             ),
-          ])),
+          ],
+        ),
+      ),
       Expanded(child: featuresOverview),
     ];
   }
@@ -274,16 +280,16 @@ class HomePageState extends State<HomePage> {
   }
 
   Widget get navBar => BottomNavigationBar(
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: featuresIcon, label: 'Features'),
-          BottomNavigationBarItem(icon: stopIcon, label: 'Stops'),
-          BottomNavigationBarItem(icon: placeIcon, label: 'Places'),
-          BottomNavigationBarItem(icon: moveIcon, label: 'Moves')
-        ],
-      );
+    onTap: onTabTapped,
+    currentIndex: _currentIndex,
+    type: BottomNavigationBarType.fixed,
+    items: const [
+      BottomNavigationBarItem(icon: featuresIcon, label: 'Features'),
+      BottomNavigationBarItem(icon: stopIcon, label: 'Stops'),
+      BottomNavigationBarItem(icon: placeIcon, label: 'Places'),
+      BottomNavigationBarItem(icon: moveIcon, label: 'Moves'),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -312,10 +318,7 @@ class HomePageState extends State<HomePage> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.teal,
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(backgroundColor: Colors.teal, title: Text(widget.title)),
       body: pages[_currentIndex],
       bottomNavigationBar: navBar,
     );

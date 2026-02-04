@@ -1,3 +1,7 @@
+## 6.1.0
+
+* upgrade of stats package
+
 ## 6.0.0
 
 * using carp_serialization for JSON serialization resulting in a new JSON schema for serialization

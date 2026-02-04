@@ -1,0 +1,25 @@
+name: movesense_plus_example
+description: "An example of how to use the movesense_plus plugin."
+publish_to: 'none'
+version: 1.1.0
+
+environment:
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  permission_handler: ^11.0.0
+  movesense_plus:
+    path: ../../movesense_plus/
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+
+flutter:
+  uses-material-design: true
