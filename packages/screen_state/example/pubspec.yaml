@@ -1,10 +1,11 @@
 name: screen_state_example
 description: Demonstrates how to use the screen_state plugin.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 5.0.0+1
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.6.0"
 
 dependencies:
   flutter:
