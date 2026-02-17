@@ -4,27 +4,25 @@ import 'package:flutter/services.dart';
 
 /// The type of screen state events coming from Android or iOS.
 enum ScreenStateEvent {
-  SCREEN_UNLOCKED,
-  SCREEN_ON,
-  SCREEN_OFF;
+  screenUnlocked,
+  screenOn,
+  screenOff;
 
   /// Returns the name of the enum value.
   String get name {
     switch (this) {
-      case ScreenStateEvent.SCREEN_UNLOCKED:
+      case ScreenStateEvent.screenUnlocked:
         return Platform.isAndroid
             ? 'android.intent.action.USER_PRESENT'
             : 'SCREEN_UNLOCKED';
-      case ScreenStateEvent.SCREEN_ON:
+      case ScreenStateEvent.screenOn:
         return Platform.isAndroid
             ? 'android.intent.action.SCREEN_ON'
             : 'SCREEN_ON';
-      case ScreenStateEvent.SCREEN_OFF:
+      case ScreenStateEvent.screenOff:
         return Platform.isAndroid
             ? 'android.intent.action.SCREEN_OFF'
             : 'SCREEN_OFF';
-      default:
-        throw ArgumentError('Unknown ScreenStateEvent: $this');
     }
   }
 
@@ -33,13 +31,13 @@ enum ScreenStateEvent {
     switch (name) {
       case 'SCREEN_UNLOCKED':
       case 'android.intent.action.USER_PRESENT': // Android only 'USER_PRESENT
-        return ScreenStateEvent.SCREEN_UNLOCKED;
+        return ScreenStateEvent.screenUnlocked;
       case 'SCREEN_ON':
       case 'android.intent.action.SCREEN_ON': // Android only 'SCREEN_ON'
-        return ScreenStateEvent.SCREEN_ON;
+        return ScreenStateEvent.screenOn;
       case 'SCREEN_OFF':
       case 'android.intent.action.SCREEN_OFF': // Android only 'SCREEN_OFF'
-        return ScreenStateEvent.SCREEN_OFF;
+        return ScreenStateEvent.screenOff;
       default:
         throw ArgumentError('Unknown ScreenStateEvent: $name');
     }
