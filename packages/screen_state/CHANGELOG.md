@@ -4,6 +4,7 @@
 * Update to gradle 8.12.1
 * Enabled SPM support
 * Improved example
+* Note: some API names have changed
 
 ## 4.1.1
 
