@@ -1,3 +1,10 @@
+## 5.0.0
+
+* Update to kotlin 2.2.2
+* Update to gradle 8.12.1
+* Enabled SPM support
+* Improved example
+
 ## 4.1.1
 
 * upgrade of Android APK
