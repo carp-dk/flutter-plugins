@@ -1,23 +1,28 @@
 name: light
-description: Plugin for collecting data from the ambient light sensor on Android.
-version: 4.1.1
+description: Plugin for collecting data from the ambient light sensor on Android and iOS.
+version: 5.0.0
 homepage: https://github.com/cph-cachet/flutter-plugins/tree/master
 
 environment:
   sdk: ^3.6.0
-  flutter: '>=3.3.0'
+  flutter: ">=3.6.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  test: any
+  flutter_test:
+    sdk: flutter
   flutter_lints: any
 
 flutter:
+  config:
+    enable-swift-package-manager: true
   plugin:
     platforms:
       android:
         package: dk.cachet.light
+        pluginClass: LightPlugin
+      ios:
         pluginClass: LightPlugin
