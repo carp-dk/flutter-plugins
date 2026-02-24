@@ -1,3 +1,8 @@
+## 5.0.0
+
+* Update Gradle and Kotlin
+* Added support for iOS Ambient reading - Requires specific permissions and certificates (see [Apple Docs | Configuring for SensorKit](https://developer.apple.com/documentation/sensorkit/configuring-your-project-for-sensor-reading))
+
 ## 4.1.1
 
 * upgrading ios version

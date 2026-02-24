@@ -13,12 +13,17 @@ class LightAppState extends State<LightApp> {
   String _luxString = 'Unknown';
   StreamSubscription<int>? _lightEvents;
 
-  void startListening() {
+  Future<void> startListening() async {
     try {
+      await Light().requestAuthorization();
       _lightEvents =
           Light().lightSensorStream.listen((luxValue) => setState(() {
                 _luxString = "$luxValue";
-              }));
+              }), onError: (Object error) {
+            setState(() {
+              _luxString = "Error: $error";
+            });
+          });
     } catch (exception) {
       print(exception);
     }
