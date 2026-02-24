@@ -1,3 +1,9 @@
+## 4.2.0
+
+- Update Kotlin version
+- Update Gradle version
+- Enabled SPM support for iOS
+
 ## 4.1.1
 
 - upgrading kotlin version
