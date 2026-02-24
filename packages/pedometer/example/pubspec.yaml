@@ -3,14 +3,14 @@ description: Demonstrates how to use the pedometer plugin.
 publish_to: "none"
 
 environment:
-  sdk: ">=3.2.0 <4.0.0"
-  flutter: ">=3.16.0"
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.6.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  permission_handler: ^11.3.0
+  permission_handler: ^12.0.1
   pedometer:
     # When depending on this package from a real application you should use:
     #   pedometer: ^x.y.z

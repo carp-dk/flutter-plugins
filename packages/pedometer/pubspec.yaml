@@ -1,11 +1,11 @@
 name: pedometer
 description: A Pedometer and Step Detection package for Android and iOS. Step count is streamed as the platform updates it.
-version: 4.1.1
+version: 4.2.0
 homepage: https://github.com/cph-cachet/flutter-plugins
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.8.0 <4.0.0"
+  flutter: ">=3.6.0"
 
 dependencies:
   flutter:
@@ -16,6 +16,8 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  config:
+    enable-swift-package-manager: true
   plugin:
     platforms:
       android:
