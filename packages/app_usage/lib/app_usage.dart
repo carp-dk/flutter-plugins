@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'dart:io' show Platform;
 
@@ -7,7 +8,7 @@ import 'dart:io' show Platform;
 class AppUsageInfo {
   late String _packageName, _appName;
   late Duration _usage;
-  DateTime _startDate, _endDate, _lastForeground;
+  final DateTime _startDate, _endDate, _lastForeground;
 
   AppUsageInfo(
     String name,
@@ -48,12 +49,19 @@ class AppUsageInfo {
 
 /// Singleton class to get app usage statistics.
 class AppUsage {
-  static const MethodChannel _methodChannel =
-      const MethodChannel("app_usage.methodChannel");
+  static const MethodChannel _methodChannel = MethodChannel(
+    "app_usage.methodChannel",
+  );
+  static bool? _debugIsAndroidOverride;
 
   static final AppUsage _instance = AppUsage._();
   AppUsage._();
   factory AppUsage() => _instance;
+
+  @visibleForTesting
+  static set debugIsAndroidOverride(bool? value) {
+    _debugIsAndroidOverride = value;
+  }
 
   /// Get app usage statistics for the specified interval. Only works on Android.
   /// Returns an empty list if called on iOS.
@@ -61,7 +69,8 @@ class AppUsage {
     DateTime startDate,
     DateTime endDate,
   ) async {
-    if (!Platform.isAndroid) return [];
+    final bool isAndroid = _debugIsAndroidOverride ?? Platform.isAndroid;
+    if (!isAndroid) return [];
 
     if (endDate.isBefore(startDate)) {
       throw ArgumentError('End date must be after start date');
@@ -72,22 +81,33 @@ class AppUsage {
     int start = startDate.millisecondsSinceEpoch;
 
     // Set parameters
-    Map<String, int> interval = {'start': start, 'end': end};
+    final Map<String, int> interval = <String, int>{'start': start, 'end': end};
 
     // Get result and parse it as a Map of <String, List<double>>
-    Map usage = await _methodChannel.invokeMethod('getUsage', interval);
+    final Map<Object?, Object?> usage =
+        await _methodChannel.invokeMethod<Map<Object?, Object?>>(
+          'getUsage',
+          interval,
+        ) ??
+        <Object?, Object?>{};
 
     // Convert to list of AppUsageInfo
-    List<AppUsageInfo> result = [];
-    for (String key in usage.keys) {
-      List<double> temp = List<double>.from(usage[key]);
+    final List<AppUsageInfo> result = <AppUsageInfo>[];
+    for (final MapEntry<Object?, Object?> entry in usage.entries) {
+      final String key = entry.key as String;
+      final List<double> temp = List<double>.from(
+        entry.value as Iterable<Object?>,
+      );
       if (temp[0] > 0) {
-        result.add(AppUsageInfo(
+        result.add(
+          AppUsageInfo(
             key,
             temp[0],
             DateTime.fromMillisecondsSinceEpoch(temp[1].round() * 1000),
             DateTime.fromMillisecondsSinceEpoch(temp[2].round() * 1000),
-            DateTime.fromMillisecondsSinceEpoch(temp[3].round() * 1000)));
+            DateTime.fromMillisecondsSinceEpoch(temp[3].round() * 1000),
+          ),
+        );
       }
     }
 

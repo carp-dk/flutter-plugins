@@ -1,3 +1,11 @@
+## 4.1.0
+
+* Upgrade gradle version 8.12.3
+* Upgrade APG
+* Upgrade Kotlin to 2.2.0
+* Add tests
+* Update Flutter SDK version
+
 ## 4.0.1
 
 * Upgrading gradle version
