@@ -25,7 +25,6 @@ These are the available plugins in this repository.
 | [esense_flutter](./packages/esense_flutter) | eSense ear sensor plugin. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/esense_flutter.svg)](https://pub.dartlang.org/packages/esense_flutter) |
 | [empatica_e4link](./packages/empatica_e4link) | Empatica E4 sensor plugin. | ✔️ | ❌  | not published |
 | [movesense_plus](./packages/movesense_plus) | Movisens sensor communication. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/movesense_plus.svg)](https://pub.dartlang.org/packages/movesense_plus) |
-| [health](https://github.com/carp-dk/carp-health-flutter) | Apple HealthKit and Google Fit interface plugin. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/health.svg)](https://pub.dartlang.org/packages/health) |
 | [activity_recognition](./packages/activity_recognition_flutter) | Activity Recognition | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/activity_recognition_flutter.svg)](https://pub.dartlang.org/packages/activity_recognition_flutter) |
 | [audio_streamer](./packages/audio_streamer) | Stream audio as PCM from mic| ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/audio_streamer.svg)](https://pub.dartlang.org/packages/audio_streamer) |
 | [mobility_features](./packages/mobility_features) | Compute daily mobility features from location data | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/mobility_features.svg)](https://pub.dartlang.org/packages/mobility_features) |
