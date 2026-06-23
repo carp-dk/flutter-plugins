@@ -1,3 +1,9 @@
+## 5.0.1
+
+* Fix app not running on Flutter 3.44.X
+* Fix privacy manifest issue on iOS.
+* Update minimum iOS version to 15.0.
+
 ## 5.0.0
 
 * Update to kotlin 2.2.2
