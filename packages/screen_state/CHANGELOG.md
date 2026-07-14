@@ -1,3 +1,10 @@
+## 5.0.2
+
+* Relax Dart SDK lower bound from `^3.12.2` to `>=3.12.0` — the patch-level pin was accidental and blocked apps on Flutter 3.44.0/3.44.1.
+* Fix Android build in apps using AGP < 9: apply the Kotlin Gradle plugin conditionally instead of pinning AGP 9.0.1/Kotlin 2.3.20 on the buildscript classpath (see the [built-in Kotlin migration guide](https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors)).
+* Fix `NoClassDefFoundError: ScreenReceiver` at runtime: `ScreenReceiver.java` lived in the `src/main/kotlin` folder and relied on a `sourceSets` override to be compiled; it is now converted to Kotlin (`ScreenReceiver.kt`).
+* Note: 5.0.1 also raised Android `minSdk` 21 → 24 and `compileSdk` 33 → 36 (undocumented in its changelog).
+
 ## 5.0.1
 
 * Fix app not running on Flutter 3.44.X
