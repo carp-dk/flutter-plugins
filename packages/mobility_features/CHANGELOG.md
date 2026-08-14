@@ -1,3 +1,7 @@
+## 6.2.0
+
+* upgrade to `carp_serializable` ^3.0.0
+
 ## 6.1.0
 
 * upgrade of stats package
