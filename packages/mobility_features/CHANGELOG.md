@@ -1,3 +1,7 @@
+## 6.2.0
+
+* widen `carp_serializable` constraint to allow 3.x
+
 ## 6.1.0
 
 * upgrade of stats package
