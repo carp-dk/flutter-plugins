@@ -1,6 +1,6 @@
 ## 6.2.0
 
-* widen `carp_serializable` constraint to allow 3.x
+* upgrade to `carp_serializable` ^3.0.0
 
 ## 6.1.0
 
