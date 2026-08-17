@@ -40,6 +40,12 @@ public class SwiftAudioStreamerPlugin: NSObject, FlutterPlugin, FlutterStreamHan
   }
 
   @objc func handleInterruption(notification: Notification) {
+    // AVAudioSession posts interruption notifications on an internal thread, so
+    // hop onto the platform thread before touching the event sink or the engine.
+    onPlatformThread { self.handleInterruptionOnPlatformThread(notification) }
+  }
+
+  private func handleInterruptionOnPlatformThread(_ notification: Notification) {
     // If no eventSink to emit events to, do nothing (wait)
     if eventSink == nil {
       return
@@ -66,22 +72,31 @@ public class SwiftAudioStreamerPlugin: NSObject, FlutterPlugin, FlutterStreamHan
       }
 
     default:
-      eventSink!(
+      eventSink?(
         FlutterError(
           code: "100", message: "Recording was interrupted",
           details: "Another process interrupted recording."))
     }
   }
 
+  // Runs [block] on the platform (main) thread.
+  //
+  // Platform channel messages must be sent on the platform thread, but the
+  // audio tap and the interruption notification both fire on other threads.
+  // See https://docs.flutter.dev/platform-integration/platform-channels#channels-and-platform-threading
+  private func onPlatformThread(_ block: @escaping () -> Void) {
+    if Thread.isMainThread {
+      block()
+    } else {
+      DispatchQueue.main.async(execute: block)
+    }
+  }
+
   // Handle stream emitting (Swift => Flutter)
   private func emitValues(values: [Float]) {
-
-    // If no eventSink to emit events to, do nothing (wait)
-    if eventSink == nil {
-      return
-    }
-    // Emit values count event to Flutter
-    eventSink!(values)
+    // Emit values event to Flutter. The sink is only read on the platform
+    // thread, so a stream cancelled in the meantime simply drops the buffer.
+    onPlatformThread { self.eventSink?(values) }
   }
 
   // Event Channel: On Stream Listen
@@ -133,10 +148,13 @@ public class SwiftAudioStreamerPlugin: NSObject, FlutterPlugin, FlutterStreamHan
 
       try engine.start()
     } catch {
-      eventSink!(
-        FlutterError(
-          code: "100", message: "Unable to start audio session", details: error.localizedDescription
-        ))
+      onPlatformThread {
+        self.eventSink?(
+          FlutterError(
+            code: "100", message: "Unable to start audio session",
+            details: error.localizedDescription
+          ))
+      }
     }
   }
 }

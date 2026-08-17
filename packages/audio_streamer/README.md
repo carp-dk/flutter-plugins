@@ -28,7 +28,9 @@ If editing the `Info.plist` file manually, the entries needed are:
 </array>
 ```
 
-Edit the `Podfile` to include the permission for the microphone:
+If your app requests the permission with [`permission_handler`](https://pub.dev/packages/permission_handler)
+**and still integrates iOS dependencies with CocoaPods**, edit the `Podfile` to enable the
+microphone permission:
 
 ```ruby
 post_install do |installer|
@@ -44,6 +46,16 @@ post_install do |installer|
   end
 end
 ```
+
+This step is not needed with Swift Package Manager — `permission_handler_apple` enables the
+microphone permission automatically when `NSMicrophoneUsageDescription` is present in
+`Info.plist`.
+
+## Swift Package Manager
+
+This plugin supports both [Swift Package Manager](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+and CocoaPods on iOS. SPM is used automatically on Flutter 3.44 and later; no configuration is
+needed. The example app is integrated with SPM only and has no `Podfile`.
 
 ## Using the plugin
 
