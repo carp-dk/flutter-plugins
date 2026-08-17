@@ -1,3 +1,11 @@
+## 6.0.0
+
+- **Breaking:** requires Flutter `>=3.44.0`
+- Updated the example app to AGP 9.0.1, Kotlin 2.3.20, Gradle 9.1.0, Java 17 and `compileSdk 37`
+- Updated the example app to `permission_handler: ^13.0.1`
+- Updated to `audio_streamer: ^5.0.0`
+- Updated documentation
+
 ## 5.1.0
 
 - update to `audio_streamer: ^4.2.0`
