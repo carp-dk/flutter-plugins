@@ -1,6 +1,7 @@
 name: audio_streamer_example
 description: Demonstrates how to use the audio_streamer plugin.
 publish_to: 'none'
+version: 1.0.0
 
 environment:
   sdk: ">=3.8.1 <4.0.0"
@@ -10,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  permission_handler: ^12.0.0
+  permission_handler: ^13.0.1
   cupertino_icons: ^1.0.4
 
 dev_dependencies:
