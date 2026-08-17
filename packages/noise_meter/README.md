@@ -7,18 +7,29 @@ A noise meter plugin for iOS and Android.
 Add `noise_meter` as a dependency in `pubspec.yaml`.
 For help on adding as a dependency, view the [documentation](https://flutter.io/using-packages/).
 
-On **Android** you need to add a permission to `AndroidManifest.xml`:
+### Requirements
+
+This plugin builds on [`audio_streamer`](https://pub.dev/packages/audio_streamer) and inherits its
+platform requirements: Flutter 3.44 or later, iOS 16.0 or later, and Android `minSdk` 24 or later.
+
+### Android
+
+Add the microphone permission to `AndroidManifest.xml`:
 
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 ```
 
-On **iOS** enable the following in XCode:
+### iOS
+
+Enable the following in Xcode:
 
 - Capabilities > Background Modes > _Audio, AirPlay and Picture in Picture_
 - In the Runner Xcode project edit the _Info.plist_ file. Add an entry for _'Privacy - Microphone Usage Description'_
-- Edit the `Podfile` to include the permission for the microphone:
+
+If your app requests the permission with [`permission_handler`](https://pub.dev/packages/permission_handler)
+**and still integrates iOS dependencies with CocoaPods**, edit the `Podfile` to enable the
+microphone permission:
 
 ```ruby
 post_install do |installer|
@@ -33,6 +44,17 @@ post_install do |installer|
   end
 end
 ```
+
+This step is not needed with Swift Package Manager — `permission_handler_apple` enables the
+microphone permission automatically when `NSMicrophoneUsageDescription` is present in
+`Info.plist`.
+
+## Swift Package Manager
+
+iOS dependencies are resolved with
+[Swift Package Manager](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+on Flutter 3.44 and later; no configuration is needed. CocoaPods remains supported for apps that
+have not migrated. The example app is integrated with SPM only and has no `Podfile`.
 
 ## Usage
 
