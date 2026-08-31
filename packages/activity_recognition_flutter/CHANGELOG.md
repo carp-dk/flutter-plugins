@@ -1,4 +1,4 @@
-## 6.0.0
+## 6.1.0
 
 Breaking changes:
 
@@ -18,6 +18,13 @@ Breaking changes:
 - Fixed activity timestamps source to the platform's `CMMotionActivity.startDate` on
   iOS, `ActivityRecognitionResult.time` on Android
 - Fixed Android events deregister on stream cancel
+
+## 6.0.0
+
+- Update AGP
+- Updated flutter version
+- Updated example app
+- Implemented use of Pigeon (see CONTRIBUTING.md)
 
 ## 5.0.0
 
