@@ -7,7 +7,7 @@ description: Demonstrates how to use the activity_recognition_flutter plugin.
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: ">=3.8.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -23,12 +23,20 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.8
+
+  # Used to request the runtime activity recognition permission on Android.
+  permission_handler: ^13.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  permission_handler: ^7.0.0
 
 flutter:
+  # The plugin ships only as a Swift package, so pin the example to Swift
+  # Package Manager instead of relying on the global `flutter config` value.
+  # Without this, a machine that has SPM disabled would fall back to CocoaPods
+  # and re-add the Pods include to ios/Flutter/{Debug,Release}.xcconfig.
+  config:
+    enable-swift-package-manager: true
   uses-material-design: true

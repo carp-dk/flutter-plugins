@@ -1,3 +1,24 @@
+## 6.0.0
+
+Breaking changes:
+
+- Requires Flutter 3.44 and Dart 3.10
+- Android package has been renamed to `dk.carp.activity_recognition_flutter`. 
+- Apps that referenced the old package in their manifest or ProGuard rules need to update those references
+- `ActivityEvent` now takes the timestamp (optional)
+- Minimum iOS deployment target is 15.0 and the Android `compileSdk` is 36
+- CocoaPods is no longer supported on iOS
+- Added Swift Package Manager (SPM)
+- Moved Android impls to Kotlin
+- Plugin now declares its own permissions, broadcast receiver and foreground
+  service in its manifest
+- Removed `ActivityRecognizedService`
+- Removed `ActivityType.INVALID`
+- Removed `ActivityEvent.fromString`
+- Fixed activity timestamps source to the platform's `CMMotionActivity.startDate` on
+  iOS, `ActivityRecognitionResult.time` on Android
+- Fixed Android events deregister on stream cancel
+
 ## 5.0.0
 
 - upgraded Android SDK level
