@@ -4,29 +4,28 @@
 
 Activity recognition plugin for Android and iOS. Only working while App is running (= not terminated by the user or OS).
 
+The communication with the native platforms is defined in [`pigeons/messages.dart`](pigeons/messages.dart)
+and generated with [Pigeon](https://pub.dev/packages/pigeon). Regenerate it after
+changing that file with:
+
+```sh
+dart run pigeon --input pigeons/messages.dart
+```
+
+The iOS implementation is a Swift package (`ios/activity_recognition_flutter/`).
+CocoaPods is no longer supported, so consuming apps must use Swift Package
+Manager. See [iOS](#ios) below.
+
 
 ## Configuration
 
-### Android 
+### Android
 
-Add the following entries inside the `<manifest>` tag:
+The permissions the plugin requires, and the broadcast receiver and 
+foreground service it relies on, are declared by the plugin.
 
-```xml
-<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-```
-
-Next, add the plugin's service inside the `<application>` tag:
-
-```xml
-<receiver android:name="dk.cachet.activity_recognition_flutter.ActivityRecognizedBroadcastReceiver"/>
-<service
-   android:name="dk.cachet.activity_recognition_flutter.ActivityRecognizedService"
-   android:permission="android.permission.BIND_JOB_SERVICE"
-   android:exported="true"/>
-<service android:name="dk.cachet.activity_recognition_flutter.ForegroundService" />
-```
+You still have to request the `ACTIVITY_RECOGNITION` runtime permission before
+listening to the stream -- see [Usage](#usage) below.
 
 #### Known Android quirks
 
@@ -37,7 +36,19 @@ This package uses the Android Embedding API v2. In order to use this in pre-Flut
 
 ### iOS 
 
-An iOS app linked on or after iOS 10.0 must include usage description keys in its `Info.plist` file for the types of data it needs. Failure to include these keys will cause the app to crash.
+This plugin ships only as a Swift package, so your app must use Swift Package
+Manager. It is enabled by default on Flutter 3.44 and later; if you turned it
+off, re-enable it with:
+
+```sh
+flutter config --enable-swift-package-manager
+```
+
+If your app still has CocoaPods integration, see
+[Flutter Swift Package Manager guide](https://docs.flutter.dev/packages-and-plugins/swift-package-manager/for-app-developers)
+for details.
+
+An iOS app linked on must include usage description keys in its `Info.plist` file for the types of data it needs. Failure to include these keys will cause the app to crash.
 To access motion and fitness data specifically, it must include `NSMotionUsageDescription`, like this:
 
 ```xml
@@ -63,7 +74,6 @@ Each detected activity will have an activity type, which is one of the following
 * TILTING
 * UNKNOWN
 * WALKING
-* INVALID (used for parsing errors)
 
-As well as a confidence expressed in percentages (i.e. a value from 0-100).
-
+As well as a confidence expressed in percentages (i.e. a value from 0-100), and
+the timestamp of the detection as reported by the platform.

@@ -42,17 +42,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- configuration for the activity recognition service -->
-        <receiver android:name="dk.cachet.activity_recognition_flutter.ActivityRecognizedBroadcastReceiver"/>
-        <service
-            android:name="dk.cachet.activity_recognition_flutter.ActivityRecognizedService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true"/>
-        <service android:name="dk.cachet.activity_recognition_flutter.ForegroundService" />
+        <!-- The receiver, services and permissions the plugin needs are declared
+             by the plugin itself and merged in automatically. -->
     </application>
-
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
 </manifest>
