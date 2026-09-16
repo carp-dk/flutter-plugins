@@ -48,9 +48,13 @@ List<Move> _findMoves(List<Stop> stops, List<LocationSample> samples) {
       final path = samples
           .where((s) =>
               previous!.dateTime.leq(s.dateTime) &&
-              previous.dateTime.geq(s.dateTime))
+              current.dateTime.geq(s.dateTime))
           .toList();
-      Move m = Move.fromPath(previous, current, path);
+      // No path (samples not kept across restarts) - fall back to the
+      // straight line between the stops rather than reporting 0 m.
+      Move m = path.length > 1
+          ? Move.fromPath(previous, current, path)
+          : Move.fromStops(previous, current);
       moves.add(m);
     }
     previous = current;

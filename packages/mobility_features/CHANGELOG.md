@@ -1,3 +1,7 @@
+## 6.2.1
+
+* Fix `distanceTraveled` always being 0: the path window between two stops ended at the first stop, so every move had an empty path. Falls back to the straight-line distance when no samples are kept (e.g. after a restart).
+
 ## 6.2.0
 
 * upgrade to `carp_serializable` ^3.0.0

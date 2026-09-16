@@ -236,6 +236,11 @@ void main() async {
       void onContext(MobilityContext mc) {
         print(mc.toJson());
         printList(mc.stops!);
+        // Once there is a move, distance is the walked path (~1.5 km home ->
+        // Falkoner Alle), not 0 - the path window must span the two stops.
+        if (mc.numberOfMoves! > 0) {
+          expect(mc.distanceTraveled, greaterThan(1000));
+        }
       }
 
       flushFiles();
