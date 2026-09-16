@@ -1,6 +1,6 @@
 name: mobility_features
 description: Calculation of real-time mobility features like places, stops, and home stay
-version: 6.2.0
+version: 6.2.1
 homepage: https://github.com/cph-cachet/flutter-plugins/
 
 environment:

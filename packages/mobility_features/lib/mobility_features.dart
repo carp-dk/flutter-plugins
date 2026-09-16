@@ -174,6 +174,7 @@ class MobilityFeatures {
     _places.clear();
     _cluster.clear();
     _buffer.clear();
+    _samples.clear();
   }
 
   /// Save a sample to the buffer and store samples on disk if buffer overflows
