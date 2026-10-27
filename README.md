@@ -24,12 +24,14 @@ These are the available plugins in this repository.
 | [movisens_flutter](./packages/movisens_flutter) | Movisens sensor communication. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/movisens_flutter.svg)](https://pub.dartlang.org/packages/movisens_flutter) |
 | [esense_flutter](./packages/esense_flutter) | eSense ear sensor plugin. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/esense_flutter.svg)](https://pub.dartlang.org/packages/esense_flutter) |
 | [empatica_e4link](./packages/empatica_e4link) | Empatica E4 sensor plugin. | ✔️ | ❌  | not published |
-| [movesense_plus](./packages/movesense_plus) | Movesens sensor communication. | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/movesense_plus.svg)](https://pub.dartlang.org/packages/movesense_plus) |
+| [movesense_plus](./packages/movesense_plus) | Movesense sensor plugin (git submodule of [carp-dk/movesense_plus](https://github.com/carp-dk/movesense_plus)). | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/movesense_plus.svg)](https://pub.dartlang.org/packages/movesense_plus) |
 | [activity_recognition](./packages/activity_recognition_flutter) | Activity Recognition | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/activity_recognition_flutter.svg)](https://pub.dartlang.org/packages/activity_recognition_flutter) |
 | [audio_streamer](./packages/audio_streamer) | Stream audio as PCM from mic| ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/audio_streamer.svg)](https://pub.dartlang.org/packages/audio_streamer) |
 | [mobility_features](./packages/mobility_features) | Compute daily mobility features from location data | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/mobility_features.svg)](https://pub.dartlang.org/packages/mobility_features) |
 | [carp_background_location](./packages/carp_background_location) | Track location, even when app is in the background | ✔️ | ✔️  | [![pub package](https://img.shields.io/pub/v/carp_background_location.svg)](https://pub.dartlang.org/packages/carp_background_location) |
 | [flutter_foreground_service](./packages/flutter_foreground_service) | **DISCONTINUED** - Foreground service for Android | ✔️ | ❌  | [![pub package](https://img.shields.io/pub/v/flutter_foreground_service.svg)](https://pub.dartlang.org/packages/flutter_foreground_service) |
+
+The `movesense_plus` package lives in its own repository, [carp-dk/movesense_plus](https://github.com/carp-dk/movesense_plus), and is included here as a git submodule. Clone with `git clone --recurse-submodules`, or run `git submodule update --init` in an existing clone, to check it out.
 
 ## Issues
 
