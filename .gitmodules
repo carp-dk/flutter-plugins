@@ -1,3 +1,4 @@
 [submodule "packages/movesense_plus"]
 	path = packages/movesense_plus
 	url = https://github.com/carp-dk/movesense_plus.git
+	branch = main
