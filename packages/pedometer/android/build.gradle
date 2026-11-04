@@ -1,19 +1,6 @@
 group 'com.example.pedometer'
 version '1.0-SNAPSHOT'
 
-buildscript {
-    ext.kotlin_version = '2.2.20'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
 rootProject.allprojects {
     repositories {
         google()
@@ -22,7 +9,16 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+// AGP 9+ has built-in Kotlin support; on older AGP, or when the app sets
+// android.builtInKotlin=false, the Kotlin Gradle plugin must be applied
+// explicitly. Version is supplied by the consuming app.
+// See https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+def agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+def builtInKotlin = agpMajor >= 9 && providers.gradleProperty('android.builtInKotlin').getOrElse('true').toBoolean()
+if (!builtInKotlin) {
+    pluginManager.apply('org.jetbrains.kotlin.android')
+}
 
 android {
     namespace "com.example.pedometer"
@@ -33,15 +29,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-    }
-
     defaultConfig {
         minSdkVersion 16
     }
@@ -50,6 +37,8 @@ android {
     }
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+    }
 }
