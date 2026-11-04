@@ -1,3 +1,8 @@
+## 4.2.1
+
+- Migrate Android to Built-in Kotlin: apply the Kotlin Gradle plugin only when Built-in Kotlin is off (AGP < 9, or `android.builtInKotlin=false`)
+- Remove the pinned AGP and Kotlin buildscript
+
 ## 4.2.0
 
 - Update Kotlin version
