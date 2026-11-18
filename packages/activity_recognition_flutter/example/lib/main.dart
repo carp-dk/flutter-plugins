@@ -46,7 +46,7 @@ class _ActivityRecognitionAppState extends State<ActivityRecognitionApp> {
 
   void _startTracking() {
     activityStreamSubscription = activityRecognition
-        .activityStream(runForegroundService: true)
+        .activityStream()
         .listen(onData, onError: onError);
   }
 

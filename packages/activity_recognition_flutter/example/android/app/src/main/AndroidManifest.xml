@@ -42,8 +42,8 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- The receiver, services and permissions the plugin needs are declared
-             by the plugin itself and merged in automatically. -->
+        <!-- The receiver and permissions the plugin needs are declared by the
+             plugin itself and merged in automatically. -->
     </application>
 
 </manifest>

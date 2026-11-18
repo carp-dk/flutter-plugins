@@ -21,11 +21,36 @@ Manager. See [iOS](#ios) below.
 
 ### Android
 
-The permissions the plugin requires, and the broadcast receiver and 
-foreground service it relies on, are declared by the plugin.
+The permissions the plugin requires and the broadcast receiver it relies on
+are declared by the plugin.
 
 You still have to request the `ACTIVITY_RECOGNITION` runtime permission before
 listening to the stream -- see [Usage](#usage) below.
+
+#### Foreground service (optional)
+
+`activityStream(runForegroundService: true)` starts a foreground service that
+keeps detections arriving while the app is in the background. It is opt-in,
+because a foreground service type has to be declared to Google Play. Apps that
+use it add this to their `AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
+
+<application>
+    <service
+        android:name="dk.carp.activity_recognition_flutter.ForegroundService"
+        android:exported="false"
+        android:foregroundServiceType="health" />
+</application>
+```
+
+Then declare the "Health" foreground service type in the Play Console under
+App content → Foreground service permissions.
+
+Apps that already run their own foreground service (e.g. for location) do not
+need this one.
 
 #### Known Android quirks
 

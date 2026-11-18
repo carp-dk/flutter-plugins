@@ -89,11 +89,12 @@ void main() {
       );
 
       final events = await ActivityRecognition()
-          .activityStream(runForegroundService: false)
+          .activityStream()
           .take(1)
           .toList();
 
       // The tracking options have to reach the platform before it starts.
+      // The foreground service is opt-in.
       expect(configurations, hasLength(1));
       expect(configurations.single.runForegroundService, isFalse);
 
