@@ -140,6 +140,16 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
 
 
     /**
+     * EventSink must be called on the main thread. streamMicData() runs on the
+     * recording thread, so errors are posted to the main looper like the data.
+     */
+    private fun postError(code: String, message: String, details: Any?) {
+        Handler(Looper.getMainLooper()).post {
+            eventSink?.error(code, message, details)
+        }
+    }
+
+    /**
      * Starts recording and streaming audio data from the mic.
      * Uses a buffer array of size 512. Whenever buffer is full, the content is sent to Flutter.
      * Sets the sample rate as defined by [sampleRate].
@@ -162,7 +172,7 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
 
             if (audioRecord.state != AudioRecord.STATE_INITIALIZED) {
                 Log.e(logTag, "Audio Record can't initialize!")
-                eventSink?.error("MIC_ERROR", "Audio Record can't initialize!", null)
+                postError("MIC_ERROR", "Audio Record can't initialize!", null)
                 recording = false
                 return
             }
@@ -184,7 +194,7 @@ class AudioStreamerPlugin : FlutterPlugin, RequestPermissionsResultListener, Eve
             }
         } catch (e: Exception) {
             Log.e(logTag, "Error while recording audio", e)
-            eventSink?.error("MIC_ERROR", "Error while recording audio", e.message)
+            postError("MIC_ERROR", "Error while recording audio", e.message)
         } finally {
             if (::audioRecord.isInitialized) {
                 if (audioRecord.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
