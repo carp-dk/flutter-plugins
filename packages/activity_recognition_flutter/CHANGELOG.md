@@ -1,3 +1,15 @@
+## 7.0.0
+
+Breaking changes:
+
+- The Android foreground service is opt-in. The plugin no longer declares
+  `FOREGROUND_SERVICE`, `FOREGROUND_SERVICE_HEALTH` and the `ForegroundService`
+  in its manifest, so apps that don't use it no longer need a Google Play
+  foreground service declaration. Apps that use it declare them, see the README.
+- `activityStream(runForegroundService:)` now defaults to `false`. If you relied
+  on the previous default, pass `runForegroundService: true` and add the
+  manifest entries from the README.
+
 ## 6.1.0
 
 Breaking changes:

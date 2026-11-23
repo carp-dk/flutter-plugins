@@ -49,6 +49,7 @@ void main() {
     final List<TrackingConfiguration> configurations = <TrackingConfiguration>[];
 
     setUp(() {
+      configurations.clear();
       messenger =
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
 
@@ -88,12 +89,13 @@ void main() {
         ),
       );
 
-      final events = await ActivityRecognition()
-          .activityStream(runForegroundService: false)
+      final events = await ActivityRecognition.forTesting()
+          .activityStream()
           .take(1)
           .toList();
 
       // The tracking options have to reach the platform before it starts.
+      // The foreground service is opt-in.
       expect(configurations, hasLength(1));
       expect(configurations.single.runForegroundService, isFalse);
 
@@ -104,6 +106,24 @@ void main() {
         events.single.timeStamp,
         DateTime.fromMillisecondsSinceEpoch(1700000000000),
       );
+    });
+
+    test('forwards runForegroundService: true when opted in', () async {
+      messenger.setMockStreamHandler(
+        _activityChannel,
+        MockStreamHandler.inline(
+          onListen: (Object? arguments, MockStreamHandlerEventSink events) {
+            events.endOfStream();
+          },
+        ),
+      );
+
+      await ActivityRecognition.forTesting()
+          .activityStream(runForegroundService: true)
+          .toList();
+
+      expect(configurations, hasLength(1));
+      expect(configurations.single.runForegroundService, isTrue);
     });
   });
 }

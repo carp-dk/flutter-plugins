@@ -2,6 +2,8 @@ library activity_recognition;
 
 import 'dart:async';
 
+import 'package:meta/meta.dart';
+
 import 'src/messages.g.dart';
 
 part 'activity_recognition_domain.dart';
@@ -18,6 +20,11 @@ class ActivityRecognition {
   /// Get the [ActivityRecognition] singleton.
   factory ActivityRecognition() => _instance;
 
+  /// Creates an isolated instance for tests so the singleton's cached stream
+  /// does not leak across test cases.
+  @visibleForTesting
+  ActivityRecognition.forTesting();
+
   final ActivityRecognitionHostApi _hostApi = ActivityRecognitionHostApi();
 
   Stream<ActivityEvent>? _stream;
@@ -26,14 +33,14 @@ class ActivityRecognition {
   ///
   /// The stream emits the *most probable* [ActivityEvent] detected by the phone.
   ///
-  /// On Android a foreground service is started by default, which allows the
-  /// updates to keep arriving while the app runs in the background. Pass
-  /// `runForegroundService: false` to opt out. The flag is ignored on iOS,
-  /// where updates are delivered in the background regardless.
+  /// On Android, `runForegroundService: true` starts a foreground service that
+  /// keeps the updates arriving while the app runs in the background. The app
+  /// then has to declare the service in its manifest, see the README. The flag
+  /// is ignored on iOS, where updates are delivered in the background regardless.
   ///
   /// The returned stream is a broadcast stream and is built once; later calls
   /// return the same stream and do not re-apply [runForegroundService].
-  Stream<ActivityEvent> activityStream({bool runForegroundService = true}) =>
+  Stream<ActivityEvent> activityStream({bool runForegroundService = false}) =>
       _stream ??= _createStream(runForegroundService);
 
   Stream<ActivityEvent> _createStream(bool runForegroundService) {

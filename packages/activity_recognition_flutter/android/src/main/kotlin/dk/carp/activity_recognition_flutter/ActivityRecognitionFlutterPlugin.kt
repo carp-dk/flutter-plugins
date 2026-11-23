@@ -1,5 +1,6 @@
 package dk.carp.activity_recognition_flutter
 
+import android.app.ForegroundServiceStartNotAllowedException
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -77,7 +78,7 @@ class ActivityRecognitionFlutterPlugin :
         val context = applicationContext ?: return
 
         if (runForegroundService) {
-            context.startForegroundService(Intent(context, ForegroundService::class.java))
+            startForegroundService(context)
         }
 
         ActivityRecognition.getClient(context)
@@ -93,6 +94,40 @@ class ActivityRecognitionFlutterPlugin :
 
         if (runForegroundService) {
             context.stopService(Intent(context, ForegroundService::class.java))
+        }
+    }
+
+    private fun startForegroundService(context: Context) {
+        try {
+            val started = context.startForegroundService(
+                Intent(context, ForegroundService::class.java),
+            )
+            if (started == null) {
+                Log.w(
+                    TAG,
+                    "ForegroundService is not declared in AndroidManifest.xml. " +
+                        "See the activity_recognition_flutter README to opt in.",
+                )
+            }
+        } catch (e: SecurityException) {
+            Log.e(
+                TAG,
+                "Could not start ForegroundService (missing foreground service or " +
+                    "ACTIVITY_RECOGNITION permission).",
+                e,
+            )
+        } catch (e: RuntimeException) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                e is ForegroundServiceStartNotAllowedException
+            ) {
+                Log.e(
+                    TAG,
+                    "Could not start ForegroundService while the app is in the background.",
+                    e,
+                )
+            } else {
+                throw e
+            }
         }
     }
 
