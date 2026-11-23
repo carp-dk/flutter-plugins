@@ -2,6 +2,8 @@ library activity_recognition;
 
 import 'dart:async';
 
+import 'package:meta/meta.dart';
+
 import 'src/messages.g.dart';
 
 part 'activity_recognition_domain.dart';
@@ -17,6 +19,11 @@ class ActivityRecognition {
 
   /// Get the [ActivityRecognition] singleton.
   factory ActivityRecognition() => _instance;
+
+  /// Creates an isolated instance for tests so the singleton's cached stream
+  /// does not leak across test cases.
+  @visibleForTesting
+  ActivityRecognition.forTesting();
 
   final ActivityRecognitionHostApi _hostApi = ActivityRecognitionHostApi();
 

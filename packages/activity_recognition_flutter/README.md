@@ -1,6 +1,6 @@
 # Activity Recognition
 
-[![pub package](https://img.shields.io/pub/v/activity_recognition_flutter.svg)](https://pub.dartlang.org/packages/activity_recognition)
+[![pub package](https://img.shields.io/pub/v/activity_recognition_flutter.svg)](https://pub.dev/packages/activity_recognition_flutter)
 
 Activity recognition plugin for Android and iOS. Only working while App is running (= not terminated by the user or OS).
 
@@ -48,6 +48,11 @@ use it add this to their `AndroidManifest.xml`:
 
 Then declare the "Health" foreground service type in the Play Console under
 App content → Foreground service permissions.
+
+If `runForegroundService: true` is passed without declaring the service in the
+manifest, Android will not start it (a warning is logged). On Android 14+,
+`ACTIVITY_RECOGNITION` must be granted before starting the foreground service,
+and `POST_NOTIFICATIONS` is needed on Android 13+ for the notification to show.
 
 Apps that already run their own foreground service (e.g. for location) do not
 need this one.
